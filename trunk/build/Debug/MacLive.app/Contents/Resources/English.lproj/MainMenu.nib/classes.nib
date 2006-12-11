@@ -1,0 +1,21 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {doIt = id; }; 
+            CLASS = AppController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                email = NSTextField; 
+                loginButton = NSButton; 
+                password = NSSecureTextField; 
+                spinner = NSProgressIndicator; 
+                tabView = NSTabView; 
+                webView = WebView; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = NSSegmentedControl; LANGUAGE = ObjC; SUPERCLASS = NSControl; }
+    ); 
+    IBVersion = 1; 
+}
