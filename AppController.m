@@ -132,6 +132,8 @@ NSString* GetPasswordKeychain() {
 
 - (void)awakeFromNib
 {
+	[tabView selectTabViewItemAtIndex: 0];
+	
 	[GrowlApplicationBridge setGrowlDelegate: self];
 	[scraper setWebView: webView];
 	
