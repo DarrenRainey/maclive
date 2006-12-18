@@ -18,6 +18,8 @@
 		1A9BB9B90B2C0800006997CF /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9BB9B60B2C0800006997CF /* Security.framework */; };
 		408BFF3A0B288C40006F1EA6 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 408BFF390B288C40006F1EA6 /* WebKit.framework */; };
 		408BFF410B288D90006F1EA6 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 408BFF400B288D90006F1EA6 /* AppController.m */; };
+		40BB99280B360DB8007FB795 /* QuickNSInvocation.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 40BB99260B360DB8007FB795 /* QuickNSInvocation.h */; };
+		40BB99290B360DB8007FB795 /* QuickNSInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 40BB99270B360DB8007FB795 /* QuickNSInvocation.m */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -32,6 +34,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				1A9BB7BD0B2BEB73006997CF /* Growl-WithInstaller.framework in CopyFiles */,
+				40BB99280B360DB8007FB795 /* QuickNSInvocation.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,6 +64,8 @@
 		408BFF390B288C40006F1EA6 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
 		408BFF3F0B288D90006F1EA6 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		408BFF400B288D90006F1EA6 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
+		40BB99260B360DB8007FB795 /* QuickNSInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickNSInvocation.h; sourceTree = "<group>"; };
+		40BB99270B360DB8007FB795 /* QuickNSInvocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickNSInvocation.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* MacLive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacLive.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -95,6 +100,8 @@
 				1A1F15B80B2941EE00C5C9EC /* Game.m */,
 				1A9BB7680B2BE510006997CF /* XBNotable.h */,
 				1A9BB7690B2BE510006997CF /* XBNotable.m */,
+				40BB99260B360DB8007FB795 /* QuickNSInvocation.h */,
+				40BB99270B360DB8007FB795 /* QuickNSInvocation.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -230,6 +237,7 @@
 				1A1F15AD0B29406500C5C9EC /* Friend.m in Sources */,
 				1A1F15B90B2941EE00C5C9EC /* Game.m in Sources */,
 				1A9BB76A0B2BE510006997CF /* XBNotable.m in Sources */,
+				40BB99290B360DB8007FB795 /* QuickNSInvocation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

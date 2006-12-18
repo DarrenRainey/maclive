@@ -22,6 +22,11 @@
 - (void)loadComplete;
 - (void)loadFailed: (NSError*)error;
 
+- (void)addFriendSucceededForGamertag: (NSString*)gamertag;
+
+- (void)addFriendFailedForGamertag: (NSString*)gamertag
+						 withError: (NSError*)error;
+
 @end
 
 @interface LiveScraper : NSObject {
@@ -35,6 +40,11 @@
 	NSString* password;
 	
 	id<LiveScraperDelegate> delegate;
+	
+	NSMutableArray* operationQueue;
+	
+	NSMutableArray* friendRequestQueue;
+	
 }
 
 - (void)setWebView: (WebView*)wv;
@@ -44,8 +54,12 @@
 - (void)updateWithUsername: (NSString*)name
 			   andPassword: (NSString*)pw;
 
+// enqueue a friend request to be made at the next update cycle
+- (void)queueFriendRequest: (NSString*)gamertag;
+
 - (NSArray*)friends;
 - (NSArray*)games;
+
 
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector;
 
