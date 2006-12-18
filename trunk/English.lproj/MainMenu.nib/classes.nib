@@ -1,15 +1,26 @@
 {
     IBClasses = (
         {
-            ACTIONS = {addFriendCancel = id; addFriendOK = id; doIt = id; showAddFriendSheet = id; }; 
+            ACTIONS = {
+                addFriendCancel = id; 
+                addFriendOK = id; 
+                doIt = id; 
+                sendMessageCancel = id; 
+                sendMessageOK = id; 
+                showAddFriendSheet = id; 
+                showMessageFriendsSheet = id; 
+            }; 
             CLASS = AppController; 
             LANGUAGE = ObjC; 
             OUTLETS = {
                 addFriendSheet = NSWindow; 
                 email = NSTextField; 
+                friendsTable = NSTableView; 
                 loginButton = NSButton; 
+                messageText = NSTextView; 
                 newFriend = NSTextField; 
                 password = NSSecureTextField; 
+                sendMessageSheet = NSWindow; 
                 spinner = NSProgressIndicator; 
                 tabView = NSTabView; 
                 webView = WebView; 

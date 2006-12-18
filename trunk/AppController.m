@@ -147,6 +147,8 @@ NSString* GetPasswordKeychain() {
 - (void)awakeFromNib
 {
 	[tabView selectTabViewItemAtIndex: 0];
+	[friendsTable setTarget: self];
+	[friendsTable setDoubleAction: @selector(showMessageFriendsSheet:)];
 	
 	[GrowlApplicationBridge setGrowlDelegate: self];
 	[scraper setWebView: webView];
@@ -215,6 +217,8 @@ NSString* GetPasswordKeychain() {
 			@"At this point I'm just going to take a hands off approach "
 			@"and let you deal with them.  Press \"OK\" and you'll see what "
 			@"I mean."] runModal];
+	// enable images for the captcha and show the window
+	[[webView preferences] setLoadsImagesAutomatically: YES];
 	[webView setHidden: NO];
 	[[webView window] makeKeyAndOrderFront: self];
 	[self loadComplete];
@@ -222,6 +226,7 @@ NSString* GetPasswordKeychain() {
 
 - (void)loadComplete
 {
+	[[webView preferences] setLoadsImagesAutomatically: NO];
 	// necessary to prevent odd bleeding bug
 	[webView setHidden: YES];
 	[[webView window] close];
@@ -340,7 +345,7 @@ NSString* GetPasswordKeychain() {
 - (NSDictionary*)registrationDictionaryForGrowl
 {
 	NSArray* objs = [NSArray arrayWithObjects: 
-		@"Friend", @"Game", @"AddFriendSuccess", @"AddFriendFailure", nil];
+		@"Friend", @"Game", @"AddFriendSuccess", @"AddFriendFailure", @"MessageSendSuccess", nil];
 	NSDictionary* ret =
 		[NSDictionary dictionaryWithObjectsAndKeys:
 			objs, GROWL_NOTIFICATIONS_ALL,
@@ -435,6 +440,50 @@ NSString* GetPasswordKeychain() {
 					   priority: 0
 					   isSticky: NO
 				   clickContext: nil];
+}
+
+- (IBAction)showMessageFriendsSheet: (id)sender
+{
+	[messageText setString: @""];
+	NSIndexSet* set = [friendsTable selectedRowIndexes];
+	savedSelectedFriends = [[[scraper friends] objectsAtIndexes: set] retain];
+	[NSApp beginSheet: sendMessageSheet
+	   modalForWindow: [tabView window]
+		modalDelegate: self
+	   didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
+		  contextInfo: nil];
+}
+- (IBAction)sendMessageOK: (id)sender
+{
+	NSLog(@"sendMessageOK");
+	[scraper queueMessage: [messageText string] 
+				toFriends: savedSelectedFriends];
+	[savedSelectedFriends release];
+	[NSApp endSheet: sendMessageSheet];
+}
+- (IBAction)sendMessageCancel: (id)sender
+{
+	NSLog(@"sendMessageCancel");
+	[savedSelectedFriends release];
+	[NSApp endSheet: sendMessageSheet];
+}
+
+- (void)sendMessageSucceeded: (NSString*)message
+				  recipients: (NSArray*)recipients
+{
+	[GrowlApplicationBridge
+				notifyWithTitle: @"Message Sent"
+					description: [NSString stringWithFormat: 
+						@"Your message to %@%s was sent",
+						[[recipients objectAtIndex: 0] gamertag],
+						([recipients count] > 1 
+						? " et al " 
+						: "")] 
+			   notificationName: @"MessageSendSuccess"
+					   iconData: nil
+					   priority: 0
+					   isSticky: NO
+				   clickContext: nil];	
 }
 
 @end
