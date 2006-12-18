@@ -1,12 +1,14 @@
 {
     IBClasses = (
         {
-            ACTIONS = {doIt = id; }; 
+            ACTIONS = {addFriendCancel = id; addFriendOK = id; doIt = id; showAddFriendSheet = id; }; 
             CLASS = AppController; 
             LANGUAGE = ObjC; 
             OUTLETS = {
+                addFriendSheet = NSWindow; 
                 email = NSTextField; 
                 loginButton = NSButton; 
+                newFriend = NSTextField; 
                 password = NSSecureTextField; 
                 spinner = NSProgressIndicator; 
                 tabView = NSTabView; 

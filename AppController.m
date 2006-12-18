@@ -130,6 +130,20 @@ NSString* GetPasswordKeychain() {
 					andPassword: [password stringValue]];
 }
 
+- (void)applicationDidFinishLaunching:(NSNotification *)notification {
+    // To get service requests to go to the controller...
+	NSLog(@"set self as services provider");
+    [NSApp setServicesProvider:self];
+	// the services menu is only updated on login but we'd rather
+	// be in there asap since our service is super bitchin.  But we don't
+	// want to do this every launch because it's expensive, so ...
+	if(!([[NSUserDefaults standardUserDefaults] boolForKey: @"UpdatedServices"])) {
+		NSUpdateDynamicServices();
+		[[NSUserDefaults standardUserDefaults] setBool: YES 
+												forKey: @"UpdatedServices"];
+	}
+}
+
 - (void)awakeFromNib
 {
 	[tabView selectTabViewItemAtIndex: 0];
@@ -170,7 +184,7 @@ NSString* GetPasswordKeychain() {
 }
 - (LiveScraper*)scraper
 {
-	NSLog(@"accessing scraper %x", (int)scraper);
+	//NSLog(@"accessing scraper %x", (int)scraper);
 	return scraper;
 }
 
@@ -322,15 +336,105 @@ NSString* GetPasswordKeychain() {
 	}
 	return nil;
 }
+
 - (NSDictionary*)registrationDictionaryForGrowl
 {
-	NSArray* objs = [NSArray arrayWithObjects: @"Friend", @"Game", nil];
+	NSArray* objs = [NSArray arrayWithObjects: 
+		@"Friend", @"Game", @"AddFriendSuccess", @"AddFriendFailure", nil];
 	NSDictionary* ret =
 		[NSDictionary dictionaryWithObjectsAndKeys:
 			objs, GROWL_NOTIFICATIONS_ALL,
 			objs, GROWL_NOTIFICATIONS_DEFAULT,
 			nil];
 	return ret;
+}
+
+
+- (void)addFriend: (NSString*)gamertag
+{
+	[scraper queueFriendRequest: gamertag];
+}
+
+- (IBAction)showAddFriendSheet: (id)sender
+{
+	[newFriend setStringValue: @""];
+	[NSApp beginSheet: addFriendSheet
+	   modalForWindow: [tabView window]
+		modalDelegate: self
+	   didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
+		  contextInfo: nil];
+}
+
+- (IBAction)addFriendOK: (id)sender
+{
+	NSLog(@"got addFriendOK");
+	[self addFriend: [newFriend stringValue]];
+	[NSApp endSheet: addFriendSheet];
+}
+
+- (void)didEndSheet:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
+{
+    [sheet orderOut:self];
+}
+
+- (IBAction)addFriendCancel: (id)sender
+{
+	NSLog(@"got addFriendCancel");
+	[NSApp endSheet: addFriendSheet];
+}
+
+- (void)doAddFriend: (NSPasteboard*)pboard
+		   userData: (NSString*)userData
+			  error: (NSString**)error
+{
+	NSString *pboardString;
+    NSArray *types;
+	
+    types = [pboard types];
+    if (![types containsObject:NSStringPboardType]) {
+        *error = NSLocalizedString(@"Error: couldn't encrypt text.",
+								   @"pboard couldn't give string.");
+        return;
+    }
+    pboardString = [pboard stringForType:NSStringPboardType];
+    if (!pboardString) {
+        *error = NSLocalizedString(@"Error: couldn't encrypt text.",
+								   @"pboard couldn't give string.");
+        return;
+    }
+    [self addFriend: pboardString];
+
+    return;
+}
+
+- (void)addFriendSucceededForGamertag: (NSString*)gamertag
+{
+	[GrowlApplicationBridge
+				notifyWithTitle: @"Friend Request Sent"
+					description: [NSString stringWithFormat: @"A friend request has been sent to %@.", gamertag]
+			   notificationName: @"AddFriendSuccess"
+					   iconData: nil
+					   priority: 0
+					   isSticky: NO
+				   clickContext: nil];
+}
+
+- (void)addFriendFailedForGamertag: (NSString*)gamertag
+						 withError: (NSError*)error
+{
+	[GrowlApplicationBridge
+				notifyWithTitle: @"Friend Request Failed"
+					description: [NSString stringWithFormat: 
+						@"A friend could not be sent to %@. "
+						@"This is likely because %@. "
+						@"It might help to %@.",
+						gamertag, [error localizedFailureReason],
+						[error localizedRecoverySuggestion]]
+			   notificationName: @"AddFriendFailure"
+					   iconData: nil
+					   priority: 0
+					   isSticky: NO
+				   clickContext: nil];
 }
 
 @end

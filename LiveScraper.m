@@ -9,13 +9,16 @@
 #import "LiveScraper.h"
 #import "Friend.h"
 #import "Game.h"
+#import "QuickNSInvocation.h"
 
 #define FRIENDS_PAGE	@"http://live.xbox.com/en-US/profile/Friends.aspx"
 #define GAMES_PAGE		@"http://live.xbox.com/en-US/profile/Achievements/ViewAchievementSummary.aspx"
 #define SIGN_IN_PAGE	@"login.live.com"
+#define FRIEND_MGMT		@"http://live.xbox.com/en-US/profile/FriendsMgmt.aspx"
 
 #define WRONG_LOGIN		@"The e-mail address or password is incorrect"
 #define LOCKED_ACCOUNT	@"Sign in failed"
+#define NO_GAMERTAG		@"The gamertag you entered does not exist on Xbox Live."
 
 #define JS_LIB			\
 	@"function elementsByClassName(tagName, className) {" \
@@ -34,13 +37,14 @@
 
 - (void)jump: (NSString*)url;
 
-- (void)nabFriends;
-- (void)nabGames;
-
+- (void)sendFriendRequest: (NSString*)gamertag;
 
 - (void)gotFriends;
 - (void)gotGames;
 - (void)gotSignIn;
+- (void)gotFriendRequestResult;
+
+- (void)nextOperation;
 
 @end
 
@@ -62,11 +66,23 @@
 	if(self = [super init]) {	
 		friends = [[NSMutableArray alloc] init];
 		games = [[NSMutableArray alloc] init];
+		operationQueue = [[NSMutableArray alloc] init];
+		friendRequestQueue = [[NSMutableArray alloc] init];
 		username = nil;
 		password = nil;
 		delegate = nil;
 	}
 	return self;
+}
+
+- (void)dealloc
+{
+	[view release];
+	[friends release];
+	[games release];
+	[operationQueue release];
+	[friendRequestQueue release];
+	[super dealloc];
 }
 
 - (void)setDelegate: (id<LiveScraperDelegate>)del
@@ -85,17 +101,10 @@
 	}
 }
 
-- (void)dealloc
-{
-	[view release];
-	[friends release];
-	[games release];
-	[super dealloc];
-}
-
 - (void)updateWithUsername: (NSString*)name
 			   andPassword: (NSString*)pw
 {
+	NSLog(@"LiveScraper begin update");
 	[delegate loadStart];
 	if(username != name) {
 		[username release];
@@ -106,12 +115,33 @@
 		password = [pw retain];
 	}
 	
-	[self nabFriends];
 	//[self webkitTestingBypass];
-	// nabGames will be called at the conclusion of gotFriends
-	// I don't do these things in parallel since I only have one
-	// web view and what with cookies it probably wouldn't
-	// work to do so anyway.
+	
+	[operationQueue removeAllObjects];
+	
+	// push operations on in reverse order that they are to run
+	NSEnumerator* e = [friendRequestQueue objectEnumerator];
+	NSString* friendToRequest = nil;
+	while(friendToRequest = [e nextObject]) {
+		[operationQueue addObject:
+			[self makeInvocationForSelector: @selector(sendFriendRequest:)
+								   withArgs: [NSArray arrayWithObject: friendToRequest]]];	
+	}
+	[operationQueue addObject:
+		[self makeInvocationForSelector: @selector(jump:)
+							   withArgs: [NSArray arrayWithObject: GAMES_PAGE]]];
+	[operationQueue addObject: 
+		[self makeInvocationForSelector: @selector(jump:)
+							   withArgs: [NSArray arrayWithObject: FRIENDS_PAGE]]];
+	
+	
+	[self nextOperation];
+}
+
+
+- (void)queueFriendRequest: (NSString*)gamertag
+{
+	[friendRequestQueue addObject: gamertag];
 }
 
 - (void)webkitTestingBypass {
@@ -143,28 +173,58 @@
 
 - (void)jump: (NSString*)to
 {
+	NSLog(@"jumping to %@", to);
 	[[view mainFrame] stopLoading];
 	[[view mainFrame] loadRequest:
 		[NSURLRequest requestWithURL:
 			[NSURL URLWithString: to]]];
 }
 
-- (void)nabFriends
-{
-	[self jump: FRIENDS_PAGE];
-}
-
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
 {
+	BOOL knownURL = YES;
 	NSString* url = [[[[frame dataSource] mainResource] URL] absoluteString];
-	if(NSNotFound != [url rangeOfString: SIGN_IN_PAGE].location) {
+	NSLog(@"at url %@", url);
+	if(NSNotFound != [url rangeOfString: SIGN_IN_PAGE options: NSLiteralSearch].location) {
 		[self gotSignIn];
-	} else if(NSNotFound != [url rangeOfString: FRIENDS_PAGE].location) {
+		knownURL = NO; // live will redirect us after sign in is completed
+	} else if(NSNotFound != [url rangeOfString: FRIENDS_PAGE options: NSLiteralSearch | NSAnchoredSearch].location) {
+		NSLog(@"gotFriends");
 		[self gotFriends];
-	} else if(NSNotFound != [url rangeOfString: GAMES_PAGE].location) {
+	} else if(NSNotFound != [url rangeOfString: GAMES_PAGE options: NSLiteralSearch | NSAnchoredSearch].location) {
+		NSLog(@"gotGames");
 		[self gotGames];
+	} else if(NSNotFound != [url rangeOfString: FRIEND_MGMT options: NSLiteralSearch | NSAnchoredSearch].location) {
+		NSLog(@"gotFriendRequestResult");
+		[self gotFriendRequestResult];
+	} else {
+		NSLog(@"got intermediate");
+		// else it's an intermediate page, just do nothing and we'll be
+		// redirected to wherever we need to go.
+		knownURL = NO;
 	}
-	// else it's an intermediate page, just do nothing
+	
+	if(knownURL) {
+		// then that means processing is complete for this step, 
+		// grab the next operation from the queue.
+		if([operationQueue count] == 0) {
+			[delegate loadComplete];
+			NSLog(@"LiveScraper end update");
+		} else {
+			[self nextOperation];
+		}
+	}
+	
+}
+
+- (void)nextOperation
+{
+	NSInvocation* ivk = [[operationQueue lastObject] retain];
+	if(ivk) {
+		[operationQueue removeLastObject];
+		[ivk invoke];
+		[ivk release];
+	}
 }
 
 - (void)gotSignIn
@@ -225,17 +285,16 @@
 	
 	[view stringByEvaluatingJavaScriptFromString: script];
 	
-	NSLog(@"Saw %d friends", [friends count]);
+	//NSLog(@"Saw %d friends", [friends count]);
 	[self didChangeValueForKey: @"friends"];
 	
-	[self jump: GAMES_PAGE];
 }
 
 - (void)sawFriend: (NSString*)gamertag
 		  iconURL: (NSString*)url
 		   status: (NSString*)status
 {
-	NSLog(@"saw friend: %@ icon: %@ status: %@", gamertag, url, status);
+	//NSLog(@"saw friend: %@ icon: %@ status: %@", gamertag, url, status);
 	Friend* f = [[Friend alloc] initWithGamertag: gamertag 
 										 iconURL: url 
 									  statusText: status];
@@ -260,31 +319,62 @@
 		@"  scraper.sawGame_iconURL_(names[i].innerText, imgs[i].src);\n"
 		@"}\n";
 	[view stringByEvaluatingJavaScriptFromString: script];
-	NSLog(@"Saw %d games", [games count]);
+	//NSLog(@"Saw %d games", [games count]);
 	[self didChangeValueForKey: @"games"];
-	
-	[delegate loadComplete];
 }
 
 - (void)sawGame: (NSString*)name
 		iconURL: (NSString*)url
 {
-	NSLog(@"saw game: %@ icon: %@", name, url);
+	//NSLog(@"saw game: %@ icon: %@", name, url);
 	Game* g = [[Game alloc] initWithName: name
 								 iconURL: url];
 	[games addObject: g];
 	[g release];
 }
 
+- (void)sendFriendRequest: (NSString*)gamertag
+{
+	NSString* url = [NSString stringWithFormat: 
+		@"http://live.xbox.com/en-US/profile/FriendsMgmt.aspx"
+		@"?Add=act&ru=%@&gt=%@",
+		[@"http://live.xbox.com/en-US/profile/Friends.aspx" 
+			stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding],
+		[gamertag stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding]];
+	[self jump: url];
+}
+
+- (void)gotFriendRequestResult
+{
+	NSString* friend = [[friendRequestQueue lastObject] retain];
+	[friendRequestQueue removeLastObject];
+	
+	NSString* documentHTML = 
+	[(DOMHTMLElement*)[[[view mainFrame] DOMDocument] documentElement] outerHTML];
+	if(NSNotFound != [documentHTML rangeOfString: NO_GAMERTAG].location) {
+		[delegate addFriendFailedForGamertag: friend
+								   withError: [NSError errorWithDomain: @"Xbox Live Scraper"
+																  code: 1 
+															  userInfo:
+									   [NSDictionary dictionaryWithObjectsAndKeys:
+										   @"no such gamertag exists", NSLocalizedFailureReasonErrorKey,
+										   @"check your typing and try again", NSLocalizedRecoverySuggestionErrorKey,
+										   nil]]];
+	} else {
+		[delegate addFriendSucceededForGamertag: friend];
+	}
+	[friend release];
+}
+
 - (NSArray*)games 
 {
-	NSLog(@"accessing games %x", (int)games);
+	//NSLog(@"accessing games %x", (int)games);
 	return games;
 }
 
 - (NSArray*)friends
 {
-	NSLog(@"accessing friends %x", (int)friends);
+	//NSLog(@"accessing friends %x", (int)friends);
 	return friends;
 }
 
