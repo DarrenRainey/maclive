@@ -15,10 +15,15 @@
 #define GAMES_PAGE		@"http://live.xbox.com/en-US/profile/Achievements/ViewAchievementSummary.aspx"
 #define SIGN_IN_PAGE	@"login.live.com"
 #define FRIEND_MGMT		@"http://live.xbox.com/en-US/profile/FriendsMgmt.aspx"
+#define SEND_MESSAGE	@"http://live.xbox.com/en-US/profile/MessageCenter/SendMessage.aspx"
 
 #define WRONG_LOGIN		@"The e-mail address or password is incorrect"
 #define LOCKED_ACCOUNT	@"Sign in failed"
 #define NO_GAMERTAG		@"The gamertag you entered does not exist on Xbox Live."
+#define ADD_RECIPIENTS	@"Add Recipients"
+#define COMPOSE_MESSAGE	@"Compose Your Message"
+#define MESSAGE_SENT	@"Your message has been sent"
+
 
 #define JS_LIB			\
 	@"function elementsByClassName(tagName, className) {" \
@@ -33,16 +38,63 @@
 	@"  return ret;" \
 	@"}"
 
+@interface SendMessage : NSObject {
+	NSArray* recipients;
+	NSString* message;
+}
+
+- (id)initWithMessage: (NSString*)message
+		   recipients: (NSArray*)recipients;
+
+- (NSArray*)recipients;
+- (NSString*)message;
+
+@end
+
+@implementation SendMessage
+
+- (id)initWithMessage: (NSString*)msg
+		   recipients: (NSArray*)recips
+{
+	if(self = [super init]) {
+		message = [msg retain];
+		recipients = [recips retain];
+	}
+	return self;
+}
+
+- (void)dealloc 
+{
+	[message release];
+	[recipients release];
+	[super dealloc];
+}
+
+- (NSArray*)recipients
+{
+	return recipients;
+}
+- (NSString*)message
+{
+	return message;
+}
+
+
+@end
+
 @interface LiveScraper (Private)
 
 - (void)jump: (NSString*)url;
 
 - (void)sendFriendRequest: (NSString*)gamertag;
+- (void)sendMessage: (SendMessage*)sm;
 
 - (void)gotFriends;
 - (void)gotGames;
 - (void)gotSignIn;
 - (void)gotFriendRequestResult;
+// returns YES if at end of sequence, NO if it initiated a new load
+- (BOOL)gotSendMessage;
 
 - (void)nextOperation;
 
@@ -68,6 +120,7 @@
 		games = [[NSMutableArray alloc] init];
 		operationQueue = [[NSMutableArray alloc] init];
 		friendRequestQueue = [[NSMutableArray alloc] init];
+		messageQueue = [[NSMutableArray alloc] init];
 		username = nil;
 		password = nil;
 		delegate = nil;
@@ -82,6 +135,7 @@
 	[games release];
 	[operationQueue release];
 	[friendRequestQueue release];
+	[messageQueue release];
 	[super dealloc];
 }
 
@@ -120,13 +174,25 @@
 	[operationQueue removeAllObjects];
 	
 	// push operations on in reverse order that they are to run
-	NSEnumerator* e = [friendRequestQueue objectEnumerator];
+	
+	NSEnumerator* e = [messageQueue objectEnumerator];
+	SendMessage* sm = nil;
+	while(sm = [e nextObject]) {
+		[operationQueue addObject:
+			[self makeInvocationForSelector: @selector(sendMessage:)
+								   withArgs: [NSArray arrayWithObject: sm]]];
+	}
+	[messageQueue removeAllObjects];
+	
+	e = [friendRequestQueue objectEnumerator];
 	NSString* friendToRequest = nil;
 	while(friendToRequest = [e nextObject]) {
 		[operationQueue addObject:
 			[self makeInvocationForSelector: @selector(sendFriendRequest:)
 								   withArgs: [NSArray arrayWithObject: friendToRequest]]];	
 	}
+	// friend requests will be cleared out as they succeed
+	
 	[operationQueue addObject:
 		[self makeInvocationForSelector: @selector(jump:)
 							   withArgs: [NSArray arrayWithObject: GAMES_PAGE]]];
@@ -142,6 +208,14 @@
 - (void)queueFriendRequest: (NSString*)gamertag
 {
 	[friendRequestQueue addObject: gamertag];
+}
+
+- (void)queueMessage: (NSString*)message
+		   toFriends: (NSArray* /* of NSString */)recipients
+{
+	[messageQueue addObject: 
+		[[[SendMessage alloc] initWithMessage: message 
+								   recipients: recipients] autorelease]];
 }
 
 - (void)webkitTestingBypass {
@@ -197,6 +271,9 @@
 	} else if(NSNotFound != [url rangeOfString: FRIEND_MGMT options: NSLiteralSearch | NSAnchoredSearch].location) {
 		NSLog(@"gotFriendRequestResult");
 		[self gotFriendRequestResult];
+	} else if(NSNotFound != [url rangeOfString: SEND_MESSAGE options: NSLiteralSearch | NSAnchoredSearch].location) {
+		NSLog(@"gotSendMessage");
+		knownURL = [self gotSendMessage];
 	} else {
 		NSLog(@"got intermediate");
 		// else it's an intermediate page, just do nothing and we'll be
@@ -364,6 +441,82 @@
 		[delegate addFriendSucceededForGamertag: friend];
 	}
 	[friend release];
+}
+
+- (void)sendMessage: (SendMessage*)sm
+{
+	NSLog(@"at sendMessage");
+	messageToSend = [sm retain];
+	[self jump: SEND_MESSAGE];
+}
+
+- (BOOL)gotSendMessage
+{
+	NSString* documentHTML = 
+	[(DOMHTMLElement*)[[[view mainFrame] DOMDocument] documentElement] outerHTML];
+	if(NSNotFound != [documentHTML rangeOfString: ADD_RECIPIENTS].location) {
+		NSLog(@"add recipients");
+		NSMutableString* jsRecips = [[NSMutableString alloc] init];
+		[jsRecips appendString: @"{"];
+		NSEnumerator *e = [[messageToSend recipients] objectEnumerator];
+		Friend* recip = nil;
+		int i = 0;
+		int last = [[messageToSend recipients] count];
+		while(recip = [e nextObject]) {
+			[jsRecips appendFormat: @"'%@': true", [recip gamertag]];
+			i++;
+			if(i != last) {
+				[jsRecips appendString: @", "];
+			}
+		}
+		[jsRecips appendString: @"}"];
+		
+		// you have to add the recips, then click add, then it refreshes, then
+		// you hit Compose Message.  I check to see if there is anybody in the
+		// recipients list and depending on what's there I do different things
+		NSString* script = [NSString stringWithFormat: 
+			@"if(document.getElementById('editRecipientsControl_recipientListBox').options.length > 0) {\n"
+			@"  alert('clicking compose message');\n"
+			@"  document.getElementById('editRecipientsControl_composeMessageButton').click();\n"
+			@"} else {\n"
+			@"  alert('filling out recipients');\n"
+			@"  var recipHash = %@;\n"
+			@"  var opts = document.getElementById('editRecipientsControl_friendListBox').options;\n"
+			@"  for(var i = 0; i < opts.length; i++) {\n"
+			@"    if(opts[i].value in recipHash) {\n"
+			@"		alert('selecting ' + opts[i].value);\n"
+			@"      opts[i].selected = true;\n"
+			@"    }\n"
+			@"  }\n"
+			@"  var addButton = document.getElementById('editRecipientsControl_addFriendButton');\n"
+			@"  alert('undisabling ' + addButton);\n"
+			@"  addButton.disabled = false;\n"
+			@"  alert('clicking ' + addButton);\n"
+			@"  addButton.click();\n"
+//			@"	document.getElementById('editRecipientsControl_composeMessageButton').click();\n"
+			@"}\n", jsRecips];
+			
+		[view stringByEvaluatingJavaScriptFromString: script];
+		
+		[jsRecips release];
+	} else if(NSNotFound != [documentHTML rangeOfString: COMPOSE_MESSAGE].location) {
+		// on the compose message page
+		NSString* script = [NSString stringWithFormat: 
+			@"var box = document.getElementById('composeMessageControl_messageTextBox');\n"
+			@"box.value = decodeURIComponent('%@');\n"
+			@"document.getElementById('composeMessageControl_sendMessageButton').click();\n",
+			[[messageToSend message] stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding]];
+		[view stringByEvaluatingJavaScriptFromString: script];
+	} else if(NSNotFound != [documentHTML rangeOfString: MESSAGE_SENT].location) {
+		[delegate sendMessageSucceeded: [messageToSend message]
+							recipients: [messageToSend recipients]];
+		[messageToSend release];
+		messageToSend = nil;
+		return YES;
+	}
+	
+	return NO;
+	
 }
 
 - (NSArray*)games 

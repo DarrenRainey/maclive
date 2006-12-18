@@ -8,6 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import <WebKit/WebKit.h>
+@class SendMessage;
 
 @protocol LiveScraperDelegate
 
@@ -27,6 +28,9 @@
 - (void)addFriendFailedForGamertag: (NSString*)gamertag
 						 withError: (NSError*)error;
 
+- (void)sendMessageSucceeded: (NSString*)message
+				  recipients: (NSArray*)recipients;
+
 @end
 
 @interface LiveScraper : NSObject {
@@ -44,6 +48,9 @@
 	NSMutableArray* operationQueue;
 	
 	NSMutableArray* friendRequestQueue;
+	NSMutableArray* messageQueue;
+	
+	SendMessage* messageToSend;
 	
 }
 
@@ -56,6 +63,10 @@
 
 // enqueue a friend request to be made at the next update cycle
 - (void)queueFriendRequest: (NSString*)gamertag;
+
+- (void)queueMessage: (NSString*)message
+		   toFriends: (NSArray* /* of Friend */)recipients;
+
 
 - (NSArray*)friends;
 - (NSArray*)games;

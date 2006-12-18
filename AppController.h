@@ -16,18 +16,27 @@
 	IBOutlet NSButton *loginButton;
 	IBOutlet NSWindow* addFriendSheet;
 	IBOutlet NSTextField *newFriend;
+	IBOutlet NSTableView *friendsTable;
+	IBOutlet NSWindow* sendMessageSheet;
+	IBOutlet NSTextView* messageText;
 	
 	LiveScraper* scraper;
 	
 	NSMutableSet* previousNotableOnlineFriends;
 	NSMutableSet* previousNotableOnlineGames;
 	
+	NSArray* savedSelectedFriends;
+	
 }
 - (IBAction)doIt:(id)sender;
-- (IBAction)showAddFriendSheet: (id)sender;
 
+- (IBAction)showAddFriendSheet: (id)sender;
 - (IBAction)addFriendOK: (id)sender;
 - (IBAction)addFriendCancel: (id)sender;
+
+- (IBAction)showMessageFriendsSheet: (id)sender;
+- (IBAction)sendMessageOK: (id)sender;
+- (IBAction)sendMessageCancel: (id)sender;
 
 - (void)setScraper: (LiveScraper*)scraper;
 - (LiveScraper*)scraper;
