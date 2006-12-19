@@ -18,7 +18,6 @@
 #define SEND_MESSAGE	@"http://live.xbox.com/en-US/profile/MessageCenter/SendMessage.aspx"
 
 #define WRONG_LOGIN		@"The e-mail address or password is incorrect"
-#define BAD_EMAIL		@"Please type your e-mail address in the following format"
 #define LOCKED_ACCOUNT	@"Sign in failed"
 #define NO_GAMERTAG		@"The gamertag you entered does not exist on Xbox Live."
 #define ADD_RECIPIENTS	@"Add Recipients"
@@ -313,8 +312,7 @@
 	// an incorrect login is a good way to get the account locked.
 	NSString* documentHTML = 
 	[(DOMHTMLElement*)[[[view mainFrame] DOMDocument] documentElement] outerHTML];
-	if(NSNotFound != [documentHTML rangeOfString: WRONG_LOGIN].location ||
-	   NSNotFound != [documentHTML rangeOfString: BAD_EMAIL].location) {
+	if(NSNotFound != [documentHTML rangeOfString: WRONG_LOGIN].location) {
 		NSLog(@"wrong login");
 		[delegate loginIncorrect];
 		return;
@@ -324,6 +322,7 @@
 		return;
 	}
 	
+		
 	// fill in the form fields with the username and password and
 	// submit the form
 	NSString* script = 
@@ -332,9 +331,21 @@
 			@"var passwordEl = document.getElementById('i0118');\n"
 			@"var email = '%@'; var password='%@';\n"
 			@"emailEl.value = email; passwordEl.value=password;\n"
-			@"document.forms[0].submit();\n", 
+			@"document.forms[0].elements['SI'].click();\n",
 			username, password];
 	[view stringByEvaluatingJavaScriptFromString: script];
+	
+	// check for js error
+	NSString* signInResult = 
+		[view stringByEvaluatingJavaScriptFromString: 
+			@"document.getElementById('i0519').style.display;"];
+	NSLog(@"sign-in got result: %@", signInResult);
+	if([signInResult isCaseInsensitiveLike: @"block"]) {
+		// then the js activated login error message is showing
+		NSLog(@"sign-in js validation failed (bad email format?)");
+		[delegate loginIncorrect];
+		return;
+	}		
 }
 
 - (void)gotFriends
