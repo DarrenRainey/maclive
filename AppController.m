@@ -202,8 +202,11 @@ NSString* GetPasswordKeychain() {
 			@"Xbox Live was not particularly impressed with your login information.  "
 			@"You should try again with the right email and password."] runModal];
 	[password setStringValue: @""];
-	[tabView selectTabViewItemWithIdentifier: @"setup"];
-	[self loadComplete];
+	
+	[loginButton setEnabled: YES];
+	[spinner stopAnimation: self];
+	[spinner setHidden: YES];
+	[tabView selectTabViewItemWithIdentifier: @"setup"];	
 }
 - (void)accountLocked
 {
@@ -221,7 +224,12 @@ NSString* GetPasswordKeychain() {
 	[[webView preferences] setLoadsImagesAutomatically: YES];
 	[webView setHidden: NO];
 	[[webView window] makeKeyAndOrderFront: self];
-	[self loadComplete];
+	
+	
+	[loginButton setEnabled: YES];
+	[spinner stopAnimation: self];
+	[spinner setHidden: YES];
+	[tabView selectTabViewItemWithIdentifier: @"setup"];
 }
 
 - (void)loadComplete

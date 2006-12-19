@@ -18,6 +18,7 @@
 #define SEND_MESSAGE	@"http://live.xbox.com/en-US/profile/MessageCenter/SendMessage.aspx"
 
 #define WRONG_LOGIN		@"The e-mail address or password is incorrect"
+#define BAD_EMAIL		@"Please type your e-mail address in the following format"
 #define LOCKED_ACCOUNT	@"Sign in failed"
 #define NO_GAMERTAG		@"The gamertag you entered does not exist on Xbox Live."
 #define ADD_RECIPIENTS	@"Add Recipients"
@@ -312,7 +313,8 @@
 	// an incorrect login is a good way to get the account locked.
 	NSString* documentHTML = 
 	[(DOMHTMLElement*)[[[view mainFrame] DOMDocument] documentElement] outerHTML];
-	if(NSNotFound != [documentHTML rangeOfString: WRONG_LOGIN].location) {
+	if(NSNotFound != [documentHTML rangeOfString: WRONG_LOGIN].location ||
+	   NSNotFound != [documentHTML rangeOfString: BAD_EMAIL].location) {
 		NSLog(@"wrong login");
 		[delegate loginIncorrect];
 		return;
