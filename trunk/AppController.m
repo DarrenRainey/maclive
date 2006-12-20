@@ -453,8 +453,7 @@ NSString* GetPasswordKeychain() {
 - (IBAction)showMessageFriendsSheet: (id)sender
 {
 	[messageText setString: @""];
-	NSIndexSet* set = [friendsTable selectedRowIndexes];
-	savedSelectedFriends = [[[scraper friends] objectsAtIndexes: set] retain];
+	savedSelectedFriends = [[friendsArrayController selectedObjects] copy];
 	[NSApp beginSheet: sendMessageSheet
 	   modalForWindow: [tabView window]
 		modalDelegate: self
