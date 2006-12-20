@@ -215,6 +215,10 @@
 			40718CB00B385CE6006256B4 /* PBXTextBookmark */ = 40718CB00B385CE6006256B4 /* PBXTextBookmark */;
 			40718CB10B385CE6006256B4 /* PBXTextBookmark */ = 40718CB10B385CE6006256B4 /* PBXTextBookmark */;
 			40718CB20B385CE6006256B4 /* PBXTextBookmark */ = 40718CB20B385CE6006256B4 /* PBXTextBookmark */;
+			40718CBD0B38F205006256B4 /* PBXTextBookmark */ = 40718CBD0B38F205006256B4 /* PBXTextBookmark */;
+			40718CBE0B38F205006256B4 /* PBXTextBookmark */ = 40718CBE0B38F205006256B4 /* PBXTextBookmark */;
+			40718CBF0B38F205006256B4 /* PBXTextBookmark */ = 40718CBF0B38F205006256B4 /* PBXTextBookmark */;
+			40718CC00B38F205006256B4 /* PBXTextBookmark */ = 40718CC00B38F205006256B4 /* PBXTextBookmark */;
 			408BFF6F0B289855006F1EA6 = 408BFF6F0B289855006F1EA6 /* PBXTextBookmark */;
 			40BB98EB0B36076A007FB795 = 40BB98EB0B36076A007FB795 /* PBXTextBookmark */;
 			40BB99120B360D3B007FB795 = 40BB99120B360D3B007FB795 /* PBXTextBookmark */;
@@ -255,7 +259,7 @@
 		fRef = 408BFF3F0B288D90006F1EA6 /* AppController.h */;
 		name = "AppController.h: 28";
 		rLen = 0;
-		rLoc = 871;
+		rLoc = 924;
 		rType = 0;
 		vrLen = 1032;
 		vrLoc = 0;
@@ -265,7 +269,7 @@
 		fRef = 408BFF3F0B288D90006F1EA6 /* AppController.h */;
 		name = "AppController.h: 28";
 		rLen = 0;
-		rLoc = 871;
+		rLoc = 924;
 		rType = 0;
 		vrLen = 1032;
 		vrLoc = 0;
@@ -285,7 +289,7 @@
 		fRef = 408BFF3F0B288D90006F1EA6 /* AppController.h */;
 		name = "AppController.h: 28";
 		rLen = 0;
-		rLoc = 871;
+		rLoc = 924;
 		rType = 0;
 		vrLen = 1032;
 		vrLoc = 0;
@@ -485,7 +489,7 @@
 		fRef = 408BFF3F0B288D90006F1EA6 /* AppController.h */;
 		name = "AppController.h: showMessageFriendsSheet:";
 		rLen = 0;
-		rLoc = 871;
+		rLoc = 924;
 		rType = 0;
 		vrLen = 1274;
 		vrLoc = 0;
@@ -495,7 +499,7 @@
 		fRef = 408BFF3F0B288D90006F1EA6 /* AppController.h */;
 		name = showMessageFriendsSheet;
 		rLen = 0;
-		rLoc = 871;
+		rLoc = 924;
 		rType = 0;
 		vrLen = 1274;
 		vrLoc = 0;
@@ -521,7 +525,7 @@
 		fRef = 408BFF3F0B288D90006F1EA6 /* AppController.h */;
 		name = "AppController.h: showMessageFriendsSheet:";
 		rLen = 131;
-		rLoc = 951;
+		rLoc = 1004;
 		rType = 0;
 		vrLen = 772;
 		vrLoc = 465;
@@ -531,7 +535,7 @@
 		fRef = 408BFF400B288D90006F1EA6 /* AppController.m */;
 		name = messageText;
 		rLen = 11;
-		rLoc = 12898;
+		rLoc = 12841;
 		rType = 0;
 		vrLen = 1710;
 		vrLoc = 11594;
@@ -551,7 +555,7 @@
 		fRef = 408BFF400B288D90006F1EA6 /* AppController.m */;
 		name = queueMessage;
 		rLen = 12;
-		rLoc = 12883;
+		rLoc = 12826;
 		rType = 0;
 		vrLen = 1884;
 		vrLoc = 11383;
@@ -571,7 +575,7 @@
 		fRef = 408BFF400B288D90006F1EA6 /* AppController.m */;
 		name = queueMessage;
 		rLen = 12;
-		rLoc = 12883;
+		rLoc = 12826;
 		rType = 0;
 		vrLen = 1702;
 		vrLoc = 11743;
@@ -611,7 +615,7 @@
 		fRef = 408BFF400B288D90006F1EA6 /* AppController.m */;
 		name = "AppController.m: 463";
 		rLen = 0;
-		rLoc = 13102;
+		rLoc = 13045;
 		rType = 0;
 		vrLen = 1793;
 		vrLoc = 11109;
@@ -1231,6 +1235,46 @@
 		vrLen = 1543;
 		vrLoc = 11920;
 	};
+	40718CBD0B38F205006256B4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1A1F158B0B292C7B00C5C9EC /* LiveScraper.m */;
+		name = "LiveScraper.m: 325";
+		rLen = 0;
+		rLoc = 8321;
+		rType = 0;
+		vrLen = 1630;
+		vrLoc = 4527;
+	};
+	40718CBE0B38F205006256B4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1A1F158B0B292C7B00C5C9EC /* LiveScraper.m */;
+		name = "LiveScraper.m: 325";
+		rLen = 0;
+		rLoc = 8321;
+		rType = 0;
+		vrLen = 1630;
+		vrLoc = 4527;
+	};
+	40718CBF0B38F205006256B4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 408BFF3F0B288D90006F1EA6 /* AppController.h */;
+		name = "AppController.h: friendsArrayController";
+		rLen = 0;
+		rLoc = 697;
+		rType = 0;
+		vrLen = 1361;
+		vrLoc = 0;
+	};
+	40718CC00B38F205006256B4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1A1F158B0B292C7B00C5C9EC /* LiveScraper.m */;
+		name = "username, password];";
+		rLen = 24;
+		rLoc = 8726;
+		rType = 0;
+		vrLen = 1684;
+		vrLoc = 7731;
+	};
 	408BFF2B0B288C10006F1EA6 /* MacLive */ = {
 		isa = PBXExecutable;
 		activeArgIndex = 2147483647;
@@ -1274,7 +1318,7 @@
 	408BFF3F0B288D90006F1EA6 /* AppController.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {754, 841}}";
-			sepNavSelRange = "{620, 10}";
+			sepNavSelRange = "{697, 0}";
 			sepNavVisRect = "{{0, 0}, {754, 841}}";
 			sepNavWindowFrame = "{{-1199, 192}, {907, 806}}";
 		};

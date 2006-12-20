@@ -19,6 +19,7 @@
 	IBOutlet NSTableView *friendsTable;
 	IBOutlet NSWindow* sendMessageSheet;
 	IBOutlet NSTextView* messageText;
+	IBOutlet NSArrayController* friendsArrayController;
 	
 	LiveScraper* scraper;
 	

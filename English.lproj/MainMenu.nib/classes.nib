@@ -15,6 +15,7 @@
             OUTLETS = {
                 addFriendSheet = NSWindow; 
                 email = NSTextField; 
+                friendsArrayController = NSArrayController; 
                 friendsTable = NSTableView; 
                 loginButton = NSButton; 
                 messageText = NSTextView; 
