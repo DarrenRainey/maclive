@@ -20,6 +20,10 @@
 	IBOutlet NSWindow* sendMessageSheet;
 	IBOutlet NSTextView* messageText;
 	IBOutlet NSArrayController* friendsArrayController;
+	IBOutlet NSMenuItem* debugToggle;
+	IBOutlet NSTableView* messagesTable;
+	IBOutlet NSArrayController* messagesArrayController;
+	IBOutlet NSTextView* messageViewer;
 	
 	LiveScraper* scraper;
 	
@@ -39,6 +43,8 @@
 - (IBAction)sendMessageOK: (id)sender;
 - (IBAction)sendMessageCancel: (id)sender;
 
+- (IBAction)markMessageRead: (id)sender;
+
 - (void)setScraper: (LiveScraper*)scraper;
 - (LiveScraper*)scraper;
 
@@ -47,5 +53,10 @@
 - (void)doAddFriend: (NSPasteboard*)pboard
 		   userData: (NSString*)userData
 			  error: (NSString**)error;
+
+- (void)showScraperWindow;
+- (void)hideScraperWindow;
+- (IBAction)toggleScraperWindow: (id)sender;
+
 
 @end
