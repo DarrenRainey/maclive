@@ -19,7 +19,7 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1094, 10402}}";
 			sepNavSelRange = "{10214, 12}";
-			sepNavVisRect = "{{0, 4406}, {890, 797}}";
+			sepNavVisRect = "{{0, 4411}, {890, 797}}";
 			sepNavWindowFrame = "{{199, 82}, {935, 870}}";
 		};
 	};
@@ -104,7 +104,7 @@
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
 					200,
-					265,
+					344,
 					20,
 					48,
 					43,
@@ -632,7 +632,7 @@
 		fRef = 8D1107310486CEB800E47090 /* Info.plist */;
 		name = "Info.plist: 22";
 		rLen = 0;
-		rLoc = 691;
+		rLoc = 651;
 		rType = 0;
 		vrLen = 1148;
 		vrLoc = 39;
@@ -642,7 +642,7 @@
 		fRef = 8D1107310486CEB800E47090 /* Info.plist */;
 		name = "Info.plist: 22";
 		rLen = 0;
-		rLoc = 691;
+		rLoc = 651;
 		rType = 0;
 		vrLen = 1132;
 		vrLoc = 39;
@@ -682,7 +682,7 @@
 		fRef = 8D1107310486CEB800E47090 /* Info.plist */;
 		name = "Info.plist: 38";
 		rLen = 0;
-		rLoc = 1102;
+		rLoc = 1052;
 		rType = 0;
 		vrLen = 1297;
 		vrLoc = 0;
@@ -795,7 +795,7 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {974, 7910}}";
 			sepNavSelRange = "{12178, 25}";
-			sepNavVisRect = "{{0, 5815}, {862, 789}}";
+			sepNavVisRect = "{{0, 5816}, {862, 789}}";
 			sepNavWindowFrame = "{{208, 56}, {907, 862}}";
 		};
 	};
@@ -936,7 +936,7 @@
 	8D1107310486CEB800E47090 /* Info.plist */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {716, 728}}";
-			sepNavSelRange = "{689, 0}";
+			sepNavSelRange = "{651, 0}";
 			sepNavVisRect = "{{0, 14}, {716, 575}}";
 			sepNavWindowFrame = "{{165, 157}, {907, 806}}";
 		};

@@ -22,6 +22,7 @@
 		408BFF410B288D90006F1EA6 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 408BFF400B288D90006F1EA6 /* AppController.m */; };
 		40BB99280B360DB8007FB795 /* QuickNSInvocation.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 40BB99260B360DB8007FB795 /* QuickNSInvocation.h */; };
 		40BB99290B360DB8007FB795 /* QuickNSInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 40BB99270B360DB8007FB795 /* QuickNSInvocation.m */; };
+		40F44CB40B82635A0024B18C /* x.icns in Resources */ = {isa = PBXBuildFile; fileRef = 40F44CB30B82635A0024B18C /* x.icns */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -71,6 +72,7 @@
 		408BFF400B288D90006F1EA6 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
 		40BB99260B360DB8007FB795 /* QuickNSInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickNSInvocation.h; sourceTree = "<group>"; };
 		40BB99270B360DB8007FB795 /* QuickNSInvocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickNSInvocation.m; sourceTree = "<group>"; };
+		40F44CB30B82635A0024B18C /* x.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = x.icns; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* MacLive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacLive.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -168,6 +170,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				40F44CB30B82635A0024B18C /* x.icns */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
@@ -228,6 +231,7 @@
 			files = (
 				8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */,
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
+				40F44CB40B82635A0024B18C /* x.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
