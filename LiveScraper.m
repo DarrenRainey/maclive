@@ -9,6 +9,7 @@
 #import "LiveScraper.h"
 #import "Friend.h"
 #import "Game.h"
+#import "Message.h"
 #import "QuickNSInvocation.h"
 
 #define FRIENDS_PAGE	@"http://live.xbox.com/en-US/profile/Friends.aspx"
@@ -16,6 +17,12 @@
 #define SIGN_IN_PAGE	@"login.live.com"
 #define FRIEND_MGMT		@"http://live.xbox.com/en-US/profile/FriendsMgmt.aspx"
 #define SEND_MESSAGE	@"http://live.xbox.com/en-US/profile/MessageCenter/SendMessage.aspx"
+#define MESSAGES_PAGE	@"http://live.xbox.com/en-US/profile/MessageCenter/ViewMessages.aspx"
+
+#define MSG_CONTENT_PAGE	@"http://live.xbox.com/en-US/profile/MessageCenter/ViewMessage.aspx?mx="
+
+#define ACCEPT_FRIEND	@"http://live.xbox.com/en-US/profile/FriendsMgmt.aspx?ru=http%3a%2f%2flive.xbox.com%2fen-US%2fprofile%2fMessageCenter%2fViewMessages.aspx&act=Accept&gt=%@"
+#define REJECT_FRIEND	@"http://live.xbox.com/en-US/profile/FriendsMgmt.aspx?ru=http%3a%2f%2flive.xbox.com%2fen-US%2fprofile%2fMessageCenter%2fViewMessages.aspx&act=Reject&gt=%@"
 
 #define WRONG_LOGIN		@"The e-mail address or password is incorrect"
 #define LOCKED_ACCOUNT	@"Sign in failed"
@@ -26,17 +33,21 @@
 
 
 #define JS_LIB			\
-	@"function elementsByClassName(tagName, className) {" \
-	@"  var els = document.getElementsByTagName(tagName);" \
-	@"  var ret = [];" \
-	@"  for(var i = 0; i < els.length; i++) {" \
-	@"    var el = els[i];" \
-	@"    if(el.className == className) {" \
-	@"      ret.push(el);" \
-	@"    }" \
-	@"  }" \
-	@"  return ret;" \
-	@"}"
+	@"function elementsByClassName(tagName, className) {\n" \
+	@"  var els = document.getElementsByTagName(tagName);\n" \
+	@"  var ret = [];\n" \
+	@"  for(var i = 0; i < els.length; i++) {\n" \
+	@"    var el = els[i];\n" \
+	@"    if(el.className == className) {\n" \
+	@"      ret.push(el);\n" \
+	@"    }\n" \
+	@"  }\n" \
+	@"  return ret;\n" \
+	@"}\n" \
+	@"function firstChild(el, type) {\n" \
+	@"  var els = el.getElementsByTagName(type);\n" \
+	@"  return els.length > 0 ? els[0] : null;\n" \
+	@"}\n"
 
 @interface SendMessage : NSObject {
 	NSArray* recipients;
@@ -96,6 +107,16 @@
 // returns YES if at end of sequence, NO if it initiated a new load
 - (BOOL)gotSendMessage;
 
+- (void)gotViewMessages;
+- (void)sawMessage: (NSString*)gamertag
+		   iconURL: (NSString*)url
+		 messageID: (NSString*)messageID
+			  time: (NSString*)timeAsString;
+
+- (void)gotMessageContent;
+- (void)sawMessageContent: (NSString*)content
+			 forMessageID: (NSString*)idAsString;
+
 - (void)nextOperation;
 
 @end
@@ -109,6 +130,11 @@
 - (void)sawGame: (NSString*)name
 		iconURL: (NSString*)url;
 
+- (void)sawMessage: (NSString*)gamertag
+		   iconURL: (NSString*)url
+		   content: (NSString*)content
+			  time: (NSString*)timeAsString;
+
 @end
 
 @implementation LiveScraper
@@ -118,9 +144,14 @@
 	if(self = [super init]) {	
 		friends = [[NSMutableArray alloc] init];
 		games = [[NSMutableArray alloc] init];
+		messages = [[NSMutableArray alloc] init];
 		operationQueue = [[NSMutableArray alloc] init];
 		friendRequestQueue = [[NSMutableArray alloc] init];
 		messageQueue = [[NSMutableArray alloc] init];
+		acceptFriendQueue = [[NSMutableSet alloc] init];
+		rejectFriendQueue = [[NSMutableSet alloc] init];
+		cachedMessageContents = [[NSMutableDictionary alloc] init];
+		newMessagesReceived = [[NSMutableArray alloc] init];
 		username = nil;
 		password = nil;
 		delegate = nil;
@@ -133,9 +164,14 @@
 	[view release];
 	[friends release];
 	[games release];
+	[messages release];
 	[operationQueue release];
 	[friendRequestQueue release];
 	[messageQueue release];
+	[acceptFriendQueue release];
+	[rejectFriendQueue release];
+	[cachedMessageContents release];
+	[newMessagesReceived release];
 	[super dealloc];
 }
 
@@ -193,6 +229,31 @@
 	}
 	// friend requests will be cleared out as they succeed
 	
+	e = [acceptFriendQueue objectEnumerator];
+	Message* acceptThis = nil;
+	while(acceptThis = [e nextObject]) {
+		[operationQueue addObject:
+			[self makeInvocationForSelector: @selector(jump:)
+								   withArgs: [NSArray arrayWithObject: 
+									   [NSString stringWithFormat: ACCEPT_FRIEND, 
+										   [[acceptThis from] gamertag]]]]];
+	}
+	[acceptFriendQueue removeAllObjects];
+	
+	e = [rejectFriendQueue objectEnumerator];
+	Message* rejectThis = nil;
+	while(rejectThis = [e nextObject]) {
+		[operationQueue addObject:
+			[self makeInvocationForSelector: @selector(jump:)
+								   withArgs: [NSArray arrayWithObject: 
+									   [NSString stringWithFormat: REJECT_FRIEND, 
+										   [[rejectThis from] gamertag]]]]];
+	}
+	[rejectFriendQueue removeAllObjects];
+	
+	[operationQueue addObject:
+		[self makeInvocationForSelector: @selector(jump:)
+							   withArgs: [NSArray arrayWithObject: MESSAGES_PAGE]]];
 	[operationQueue addObject:
 		[self makeInvocationForSelector: @selector(jump:)
 							   withArgs: [NSArray arrayWithObject: GAMES_PAGE]]];
@@ -274,6 +335,12 @@
 	} else if(NSNotFound != [url rangeOfString: SEND_MESSAGE options: NSLiteralSearch | NSAnchoredSearch].location) {
 		NSLog(@"gotSendMessage");
 		knownURL = [self gotSendMessage];
+	} else if(NSNotFound != [url rangeOfString: MESSAGES_PAGE options: NSLiteralSearch | NSAnchoredSearch].location) {
+		NSLog(@"gotViewMessages");
+		[self gotViewMessages];
+	} else if(NSNotFound != [url rangeOfString: MSG_CONTENT_PAGE options: NSLiteralSearch | NSAnchoredSearch].location) {
+		NSLog(@"gotMessageContent");
+		[self gotMessageContent];
 	} else {
 		NSLog(@"got intermediate");
 		// else it's an intermediate page, just do nothing and we'll be
@@ -287,6 +354,13 @@
 		if([operationQueue count] == 0) {
 			[delegate loadComplete];
 			NSLog(@"LiveScraper end update");
+			// send any notifications about messages being received
+			NSEnumerator* e = [newMessagesReceived objectEnumerator];
+			Message* m = nil;
+			while(m = [e nextObject]) {
+				[delegate messageReceived: m];
+			}
+			[newMessagesReceived removeAllObjects];
 		} else {
 			[self nextOperation];
 		}
@@ -362,14 +436,7 @@
 		@"var names = elementsByClassName('td', 'XbcGamerTag');\n"
 		@"var statuses = elementsByClassName('td', 'XbcGamerDescription');\n"
 		@"for(var i = 0; i < imgs.length; i++) {\n"
-		@"	var url = null;\n"
-		@"	for(var j = 0; j < imgs[i].childNodes.length; j++) {\n"
-		@"	  var e = imgs[i].childNodes[j];\n"
-		@"	  if(e.tagName == 'IMG') {\n"
-		@"      url = e.src;\n"
-		@"		break;\n"
-		@"    }\n"
-		@"  }\n"
+		@"	var url = firstChild(imgs[i], 'IMG').src;\n"
 		@"  scraper.sawFriend_iconURL_status_(names[i].innerText, url, statuses[i].innerText);\n"
 		@"}\n";
 	
@@ -532,6 +599,112 @@
 	
 }
 
+
+- (void)gotViewMessages 
+{
+	[self willChangeValueForKey: @"messages"];
+	[messages removeAllObjects];
+	
+	[[view windowScriptObject] setValue: self forKey: @"scraper"];
+	NSString* script = 
+		JS_LIB
+		@"var images = elementsByClassName('td', 'XbcGamerTile');\n"
+		@"alert('i see ' + images.length + ' images');\n"
+		@"var names = elementsByClassName('td', 'XbcGamerTag');\n"
+		@"alert('i see ' + names.length + ' names');\n"
+		@"var times = elementsByClassName('td', 'XbcGamerDescription');\n"
+		@"alert('i see ' + times.length + ' times');\n"
+		@"for(var i = 0; i < names.length; i++) {\n"
+		@"  alert('looking at message ' + i);\n"
+		@"  var url = firstChild(names[i], 'A').href;\n"
+		@"  alert('url is ' + url);\n"
+		@"  var gamertag = names[i].innerText;\n" 
+		@"  alert('gamertag is ' + gamertag);\n"
+		@"  var id = url.replace(/.*mx=(\\d+).*$/, '$1');\n"
+		@"  alert('id is ' + id);\n"
+		@"  var iconURL = firstChild(images[i], 'IMG').src;\n"
+		@"  alert('iconURL is ' + iconURL);\n"
+		@"  var time = times[i].innerText;\n"
+		@"  alert('time is ' + time);\n"
+		@"  var read = names[i].parentNode.parentNode.className == 'XbcMessageRead';\n"
+		@"  alert('read status is ' + read);\n"
+		@"  scraper.sawMessage_iconURL_messageID_time_read_(gamertag, iconURL, id, time, read);\n"
+		@"}\n";
+	NSLog(@"running gotViewMessages script");
+	[view stringByEvaluatingJavaScriptFromString: script];
+	[self didChangeValueForKey: @"messages"];
+}
+
+- (void)sawMessage: (NSString*)gamertag
+		   iconURL: (NSString*)url
+		 messageID: (NSString*)messageID
+			  time: (NSString*)timeAsString
+			  read: (BOOL)readStatus
+{
+	int idAsInt = [messageID intValue];
+	NSNumber* idAsNum = [NSNumber numberWithInt: idAsInt];
+	if(![cachedMessageContents objectForKey: idAsNum]) {
+		NSLog(@"enqueueing lookup of message id %d", idAsInt);
+		Friend* f = [[Friend alloc] initWithGamertag: gamertag
+											 iconURL: url
+										  statusText: nil];
+		Message* m = [[Message alloc] initWithFrom: f 
+										   content: nil 
+											  time: timeAsString
+										 messageID: idAsInt
+										readStatus: readStatus
+									   fromScraper: self];
+		[f release];
+		[messages addObject: m];
+		[cachedMessageContents setObject: m forKey: idAsNum];
+		[operationQueue addObject:
+			[self makeInvocationForSelector: @selector(jump:)
+								   withArgs: [NSArray arrayWithObject:
+									   [NSString stringWithFormat: @"%@%d", MSG_CONTENT_PAGE, idAsInt]]]];
+		[m release];		
+	} else {
+		[messages addObject: [cachedMessageContents objectForKey: idAsNum]];
+	}
+}
+
+- (void)gotMessageContent {
+	[[view windowScriptObject] setValue: self forKey: @"scraper"];
+	NSString* script = 
+		JS_LIB
+		@"var textEls = elementsByClassName('div', 'XbcMessageTextPanel');\n"
+		@"if(textEls.length > 0) {\n"
+		@"  var id = window.location.href.replace(/.*mx=(\\d+).*$/, '$1');\n"
+		// note, use innerHTML below here if it's ever figured out how to
+		// get NSAttributedString to take html without freezing
+		@"  scraper.sawMessageContent_forMessageID_(textEls[0].innerText, id);\n"
+		@"}\n";
+	[view stringByEvaluatingJavaScriptFromString: script];
+}
+
+- (void)sawMessageContent: (NSString*)content
+			 forMessageID: (NSString*)idAsString
+{
+	[self willChangeValueForKey: @"messages"];
+	int idAsInt = [idAsString intValue];
+	NSNumber* idAsNum = [NSNumber numberWithInt: idAsInt];
+	Message* m = [cachedMessageContents objectForKey: idAsNum];
+	[m setContent: content];
+	if(NO == [m readStatus]) {
+		[newMessagesReceived addObject: m];
+	}
+	[self didChangeValueForKey: @"messages"];
+}
+
+
+- (void)acceptFriendRequest: (Message*)fromMsg
+{
+	[acceptFriendQueue addObject: fromMsg];
+}
+- (void)rejectFriendRequest: (Message*)fromMsg
+{
+	[rejectFriendQueue addObject: fromMsg];
+}
+
 - (NSArray*)games 
 {
 	//NSLog(@"accessing games %x", (int)games);
@@ -542,6 +715,10 @@
 {
 	//NSLog(@"accessing friends %x", (int)friends);
 	return friends;
+}
+- (NSArray*)messages
+{
+	return messages;
 }
 
 - (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message

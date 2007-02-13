@@ -2,6 +2,7 @@
 #import "LiveScraper.h"
 #import "Friend.h"
 #import "Game.h"
+#import "Message.h"
 
 // for keychain access
 #include <CoreFoundation/CoreFoundation.h>
@@ -149,6 +150,11 @@ NSString* GetPasswordKeychain() {
 	[tabView selectTabViewItemAtIndex: 0];
 	[friendsTable setTarget: self];
 	[friendsTable setDoubleAction: @selector(showMessageFriendsSheet:)];
+	[messagesTable setTarget: self];
+	[messagesTable setDoubleAction: @selector(showMessageFriendsSheet:)];
+	[messagesTable setAction: @selector(markMessageRead:)];
+	// no idea why this won't stick in the nib
+	[messageViewer setEditable: NO];
 	
 	[GrowlApplicationBridge setGrowlDelegate: self];
 	[scraper setWebView: webView];
@@ -190,6 +196,28 @@ NSString* GetPasswordKeychain() {
 	return scraper;
 }
 
+- (void)showScraperWindow {
+	[[webView preferences] setLoadsImagesAutomatically: YES];
+	[webView setHidden: NO];
+	[[webView window] makeKeyAndOrderFront: self];
+	
+	[debugToggle setState: NSOnState];
+}
+- (void)hideScraperWindow {
+	[[webView preferences] setLoadsImagesAutomatically: NO];
+	[webView setHidden: YES];
+	[[webView window] close];
+	[debugToggle setState: NSOffState];
+}
+- (IBAction)toggleScraperWindow: (id)sender {
+	if([[webView window] isVisible]) {
+		[self hideScraperWindow];
+	} else {
+		[self showScraperWindow];
+	}
+}
+
+
 - (void)loginIncorrect
 {
 	NSLog(@"loginIncorrect");
@@ -221,10 +249,7 @@ NSString* GetPasswordKeychain() {
 			@"and let you deal with them.  Press \"OK\" and you'll see what "
 			@"I mean."] runModal];
 	// enable images for the captcha and show the window
-	[[webView preferences] setLoadsImagesAutomatically: YES];
-	[webView setHidden: NO];
-	[[webView window] makeKeyAndOrderFront: self];
-	
+	[self showScraperWindow];	
 	
 	[loginButton setEnabled: YES];
 	[spinner stopAnimation: self];
@@ -236,8 +261,7 @@ NSString* GetPasswordKeychain() {
 {
 	[[webView preferences] setLoadsImagesAutomatically: NO];
 	// necessary to prevent odd bleeding bug
-	[webView setHidden: YES];
-	[[webView window] close];
+	[self hideScraperWindow];
 	[loginButton setEnabled: YES];
 	[spinner stopAnimation: self];
 	[spinner setHidden: YES];
@@ -353,7 +377,14 @@ NSString* GetPasswordKeychain() {
 - (NSDictionary*)registrationDictionaryForGrowl
 {
 	NSArray* objs = [NSArray arrayWithObjects: 
-		@"Friend", @"Game", @"AddFriendSuccess", @"AddFriendFailure", @"MessageSendSuccess", nil];
+		@"Friend", 
+		@"Game", 
+		@"AddFriendSuccess", 
+		@"AddFriendFailure", 
+		@"MessageSendSuccess",
+		@"MessageReceived",
+		nil];
+	
 	NSDictionary* ret =
 		[NSDictionary dictionaryWithObjectsAndKeys:
 			objs, GROWL_NOTIFICATIONS_ALL,
@@ -450,10 +481,32 @@ NSString* GetPasswordKeychain() {
 				   clickContext: nil];
 }
 
+- (IBAction)markMessageRead: (id)sender
+{
+	NSArray* selection = [messagesArrayController selectedObjects];
+	if([selection count] > 0) {
+		[[selection objectAtIndex: 0] setReadStatus: YES];
+	}
+	[messageViewer setEditable: NO];
+}
+
 - (IBAction)showMessageFriendsSheet: (id)sender
 {
 	[messageText setString: @""];
-	savedSelectedFriends = [[friendsArrayController selectedObjects] copy];
+	[savedSelectedFriends release];
+	if([[[tabView selectedTabViewItem] identifier] isEqual: @"messages"]) {
+		savedSelectedFriends = [[NSMutableArray alloc] init];
+		NSEnumerator* e = [[messagesArrayController selectedObjects] objectEnumerator];
+		Message* m = nil;
+		while(m = [e nextObject]) {
+			[(NSMutableArray*)savedSelectedFriends addObject: [m from]];
+		}
+	} else if([[[tabView selectedTabViewItem] identifier] isEqual: @"friends"]) {
+		savedSelectedFriends = [[friendsArrayController selectedObjects] copy];
+	} else {
+		return;
+	}
+	
 	[NSApp beginSheet: sendMessageSheet
 	   modalForWindow: [tabView window]
 		modalDelegate: self
@@ -491,6 +544,21 @@ NSString* GetPasswordKeychain() {
 					   priority: 0
 					   isSticky: NO
 				   clickContext: nil];	
+}
+
+- (void)messageReceived: (Message*)message
+{
+	NSData* iconData = 
+		[[[[NSImage alloc] initWithContentsOfURL: [[message from] icon]] autorelease] TIFFRepresentation];
+	[GrowlApplicationBridge
+				notifyWithTitle: [NSString stringWithFormat: @"Message From %@", [[message from] gamertag]]
+					description: [message content]
+			   notificationName: @"MessageReceived"
+					   iconData: iconData
+					   priority: 0
+					   isSticky: NO
+				   clickContext: nil];	
+	 
 }
 
 @end

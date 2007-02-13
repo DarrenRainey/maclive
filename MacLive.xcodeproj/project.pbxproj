@@ -16,6 +16,8 @@
 		1A9BB9B70B2C0800006997CF /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9BB9B40B2C0800006997CF /* CoreFoundation.framework */; };
 		1A9BB9B80B2C0800006997CF /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9BB9B50B2C0800006997CF /* CoreServices.framework */; };
 		1A9BB9B90B2C0800006997CF /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9BB9B60B2C0800006997CF /* Security.framework */; };
+		40718CD70B499927006256B4 /* Message.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 40718CD50B499927006256B4 /* Message.h */; };
+		40718CD80B499927006256B4 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 40718CD60B499927006256B4 /* Message.m */; };
 		408BFF3A0B288C40006F1EA6 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 408BFF390B288C40006F1EA6 /* WebKit.framework */; };
 		408BFF410B288D90006F1EA6 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 408BFF400B288D90006F1EA6 /* AppController.m */; };
 		40BB99280B360DB8007FB795 /* QuickNSInvocation.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 40BB99260B360DB8007FB795 /* QuickNSInvocation.h */; };
@@ -35,6 +37,7 @@
 			files = (
 				1A9BB7BD0B2BEB73006997CF /* Growl-WithInstaller.framework in CopyFiles */,
 				40BB99280B360DB8007FB795 /* QuickNSInvocation.h in CopyFiles */,
+				40718CD70B499927006256B4 /* Message.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,6 +64,8 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* MacLive_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacLive_Prefix.pch; sourceTree = "<group>"; };
+		40718CD50B499927006256B4 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
+		40718CD60B499927006256B4 /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
 		408BFF390B288C40006F1EA6 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
 		408BFF3F0B288D90006F1EA6 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		408BFF400B288D90006F1EA6 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
@@ -102,6 +107,8 @@
 				1A9BB7690B2BE510006997CF /* XBNotable.m */,
 				40BB99260B360DB8007FB795 /* QuickNSInvocation.h */,
 				40BB99270B360DB8007FB795 /* QuickNSInvocation.m */,
+				40718CD50B499927006256B4 /* Message.h */,
+				40718CD60B499927006256B4 /* Message.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -238,6 +245,7 @@
 				1A1F15B90B2941EE00C5C9EC /* Game.m in Sources */,
 				1A9BB76A0B2BE510006997CF /* XBNotable.m in Sources */,
 				40BB99290B360DB8007FB795 /* QuickNSInvocation.m in Sources */,
+				40718CD80B499927006256B4 /* Message.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,6 +275,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 2;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
@@ -279,6 +288,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = MacLive;
+				VERSIONING_SYSTEM = "apple-generic";
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
 			};
@@ -291,6 +301,7 @@
 					ppc,
 					i386,
 				);
+				CURRENT_PROJECT_VERSION = 2;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
@@ -301,6 +312,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = MacLive;
+				VERSIONING_SYSTEM = "apple-generic";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

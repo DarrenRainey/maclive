@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import <WebKit/WebKit.h>
 @class SendMessage;
+@class Message;
 
 @protocol LiveScraperDelegate
 
@@ -31,12 +32,15 @@
 - (void)sendMessageSucceeded: (NSString*)message
 				  recipients: (NSArray*)recipients;
 
+- (void)messageReceived: (Message*)message;
+
 @end
 
 @interface LiveScraper : NSObject {
 
 	NSMutableArray* friends;
 	NSMutableArray* games;
+	NSMutableArray* messages;
 
 	WebView* view;
 	
@@ -50,7 +54,14 @@
 	NSMutableArray* friendRequestQueue;
 	NSMutableArray* messageQueue;
 	
+	NSMutableSet* acceptFriendQueue;
+	NSMutableSet* rejectFriendQueue;
+	
+	NSMutableDictionary* cachedMessageContents;
+	
 	SendMessage* messageToSend;
+	
+	NSMutableArray* newMessagesReceived;
 	
 }
 
@@ -67,9 +78,12 @@
 - (void)queueMessage: (NSString*)message
 		   toFriends: (NSArray* /* of Friend */)recipients;
 
+- (void)acceptFriendRequest: (Message*)fromMsg;
+- (void)rejectFriendRequest: (Message*)fromMsg;
 
 - (NSArray*)friends;
 - (NSArray*)games;
+- (NSArray*)messages;
 
 
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector;
