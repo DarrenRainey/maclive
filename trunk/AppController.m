@@ -16,6 +16,7 @@
 - (void)processNotifications;
 - (Game*)gameFromFriend: (Friend*)f;
 - (void)update;
+- (void)cancelUpdate;
 
 @end
 
@@ -117,12 +118,20 @@ NSString* GetPasswordKeychain() {
 - (IBAction)doIt:(id)sender
 {
 	NSLog(@"running ...");
+	[self cancelUpdate];
 	[[NSUserDefaults standardUserDefaults] setValue: [email stringValue] 
 											 forKey: @"email"];
 	
 	StorePasswordKeychain([password stringValue]);
 	
 	[self update];
+}
+
+- (void)cancelUpdate 
+{
+	[NSObject cancelPreviousPerformRequestsWithTarget: self 
+											 selector: @selector(update) 
+											   object: nil];
 }
 
 - (void)update
@@ -221,6 +230,7 @@ NSString* GetPasswordKeychain() {
 - (void)loginIncorrect
 {
 	NSLog(@"loginIncorrect");
+	[self cancelUpdate];
 	[[NSAlert alertWithMessageText:
 			@"Sign In Failed"
 					defaultButton: @"OK"
@@ -239,6 +249,7 @@ NSString* GetPasswordKeychain() {
 - (void)accountLocked
 {
 	NSLog(@"accountLocked");
+	[self cancelUpdate];
 	[[NSAlert alertWithMessageText:
 		@"Bad News: Xbox Live is seriously vexed with you"
 					defaultButton: @"OK"
@@ -284,6 +295,7 @@ NSString* GetPasswordKeychain() {
 }
 - (void)loadFailed: (NSError*)error
 {
+	[self cancelUpdate];
 	[[NSAlert alertWithError: error] runModal];
 	[webView setHidden: YES];
 	[[webView window] close];

@@ -12,6 +12,11 @@
 #import "Message.h"
 #import "QuickNSInvocation.h"
 
+// if it takes longer than m seconds to log in and scrape, assume
+// that i'm stuck somewhere
+#define SCRAPE_TIME		60.0
+#define TIME_UP_ERROR	1
+
 #define FRIENDS_PAGE	@"http://live.xbox.com/en-US/profile/Friends.aspx"
 #define GAMES_PAGE		@"http://live.xbox.com/en-US/profile/Achievements/ViewAchievementSummary.aspx"
 #define SIGN_IN_PAGE	@"login.live.com"
@@ -119,6 +124,8 @@
 
 - (void)nextOperation;
 
+- (void)timeUp;
+
 @end
 
 @interface LiveScraper (JSCallbacks)
@@ -195,6 +202,12 @@
 			   andPassword: (NSString*)pw
 {
 	NSLog(@"LiveScraper begin update");
+	[NSObject cancelPreviousPerformRequestsWithTarget: self
+											 selector: @selector(timeUp)
+											   object: nil];
+	[self performSelector: @selector(timeUp) 
+			   withObject: nil
+			   afterDelay: SCRAPE_TIME];
 	[delegate loadStart];
 	if(username != name) {
 		[username release];
@@ -265,6 +278,20 @@
 	[self nextOperation];
 }
 
+- (void)timeUp
+{
+	[view stopLoading: self];
+	NSError* error = [NSError errorWithDomain: @"LiveScraper" 
+										 code: TIME_UP_ERROR 
+									 userInfo: 
+		[NSDictionary dictionaryWithObjectsAndKeys: 
+			[NSString stringWithFormat: @"Could not load xbox live information in %.0f seconds", SCRAPE_TIME],
+			NSLocalizedDescriptionKey,
+			@"You might try checking your network connection or your Microsoft Passport username and password",
+			NSLocalizedRecoverySuggestionErrorKey,
+			nil]];
+	[delegate loadFailed: error];
+}
 
 - (void)queueFriendRequest: (NSString*)gamertag
 {
@@ -352,6 +379,9 @@
 		// then that means processing is complete for this step, 
 		// grab the next operation from the queue.
 		if([operationQueue count] == 0) {
+			[NSObject cancelPreviousPerformRequestsWithTarget: self
+													 selector: @selector(timeUp)
+													   object: nil];
 			[delegate loadComplete];
 			NSLog(@"LiveScraper end update");
 			// send any notifications about messages being received
