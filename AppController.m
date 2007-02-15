@@ -505,7 +505,8 @@ NSString* GetPasswordKeychain() {
 - (IBAction)showMessageFriendsSheet: (id)sender
 {
 	[messageText setString: @""];
-	[savedSelectedFriends release];
+	// note that savedSelectedFriends is released on either OK or Cancel
+	// so no need to release it here as well.
 	if([[[tabView selectedTabViewItem] identifier] isEqual: @"messages"]) {
 		savedSelectedFriends = [[NSMutableArray alloc] init];
 		NSEnumerator* e = [[messagesArrayController selectedObjects] objectEnumerator];
@@ -531,12 +532,14 @@ NSString* GetPasswordKeychain() {
 	[scraper queueMessage: [messageText string] 
 				toFriends: savedSelectedFriends];
 	[savedSelectedFriends release];
+	savedSelectedFriends = nil;
 	[NSApp endSheet: sendMessageSheet];
 }
 - (IBAction)sendMessageCancel: (id)sender
 {
 	NSLog(@"sendMessageCancel");
 	[savedSelectedFriends release];
+	savedSelectedFriends = nil;
 	[NSApp endSheet: sendMessageSheet];
 }
 

@@ -24,7 +24,7 @@
 {
 	if(self = [super init]) {
 		from = [_from retain];
-		[self setContent: content];
+		[self setContent: _content];
 		[self setReadStatus: _readStatus];
 		time = [[NSDate dateWithNaturalLanguageString: _timeAsString] retain];
 		messageID = _messageID;
@@ -32,6 +32,14 @@
 		scraper = _scraper;
 	}
 	return self;
+}
+
+- (void)dealloc {
+	[from release];
+	[content release];
+	[attributedContent release];
+	[time release];
+	[super dealloc];
 }
 
 - (Friend*)from
@@ -98,6 +106,12 @@
 }
 - (void)setReadStatus: (BOOL)flag {
 	readStatus = flag;
+}
+
+- (void)discard 
+{
+	NSLog(@"discard message %d", messageID);
+	[scraper deleteMessage: self];
 }
 
 
