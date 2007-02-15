@@ -19,11 +19,16 @@ cd ../..
 
 echo +++ Uploading ...
 
-python googlecode-upload.py \
-    -s "Current Release" \
-    -p "maclive" \
-    -u "$1" \
-    -l "Featured,Type-Executable,Type-Archive,OpSys-OSX" \
-    "build/Release/MacLive_V${2}.zip"
+# this lousy upload script doesn't work, it gives permission
+# denied every time
+
+echo +++ But the upload script is broken, so you will have to do it through the web interface
+
+#python googlecode-upload.py \
+#    -s "Current Release" \
+#    -p "maclive" \
+#    -u "$1" \
+#    -l "Featured,Type-Executable,Type-Archive,OpSys-OSX" \
+#    "build/Release/MacLive_V${2}.zip"
 
 echo +++ All Done!

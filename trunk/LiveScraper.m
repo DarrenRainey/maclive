@@ -29,6 +29,9 @@
 #define ACCEPT_FRIEND	@"http://live.xbox.com/en-US/profile/FriendsMgmt.aspx?ru=http%3a%2f%2flive.xbox.com%2fen-US%2fprofile%2fMessageCenter%2fViewMessages.aspx&act=Accept&gt=%@"
 #define REJECT_FRIEND	@"http://live.xbox.com/en-US/profile/FriendsMgmt.aspx?ru=http%3a%2f%2flive.xbox.com%2fen-US%2fprofile%2fMessageCenter%2fViewMessages.aspx&act=Reject&gt=%@"
 
+#define DISCARD_MESSAGE @"http://live.xbox.com/en-US/profile/MessageCenter/RemoveMessage.aspx?mx=%d&bk=0"
+#define MSG_DISCARDED	@"http://live.xbox.com/en-US/profile/MessageCenter/RemoveMessage.aspx"
+
 #define WRONG_LOGIN		@"The e-mail address or password is incorrect"
 #define LOCKED_ACCOUNT	@"Sign in failed"
 #define NO_GAMERTAG		@"The gamertag you entered does not exist on Xbox Live."
@@ -159,6 +162,7 @@
 		rejectFriendQueue = [[NSMutableSet alloc] init];
 		cachedMessageContents = [[NSMutableDictionary alloc] init];
 		newMessagesReceived = [[NSMutableArray alloc] init];
+		deleteMessageQueue = [[NSMutableArray alloc] init];
 		username = nil;
 		password = nil;
 		delegate = nil;
@@ -179,6 +183,7 @@
 	[rejectFriendQueue release];
 	[cachedMessageContents release];
 	[newMessagesReceived release];
+	[deleteMessageQueue release];
 	[super dealloc];
 }
 
@@ -253,6 +258,17 @@
 	}
 	[acceptFriendQueue removeAllObjects];
 	
+	
+	[operationQueue addObject:
+		[self makeInvocationForSelector: @selector(jump:)
+							   withArgs: [NSArray arrayWithObject: MESSAGES_PAGE]]];
+	[operationQueue addObject:
+		[self makeInvocationForSelector: @selector(jump:)
+							   withArgs: [NSArray arrayWithObject: GAMES_PAGE]]];
+	[operationQueue addObject: 
+		[self makeInvocationForSelector: @selector(jump:)
+							   withArgs: [NSArray arrayWithObject: FRIENDS_PAGE]]];
+	
 	e = [rejectFriendQueue objectEnumerator];
 	Message* rejectThis = nil;
 	while(rejectThis = [e nextObject]) {
@@ -264,15 +280,16 @@
 	}
 	[rejectFriendQueue removeAllObjects];
 	
-	[operationQueue addObject:
-		[self makeInvocationForSelector: @selector(jump:)
-							   withArgs: [NSArray arrayWithObject: MESSAGES_PAGE]]];
-	[operationQueue addObject:
-		[self makeInvocationForSelector: @selector(jump:)
-							   withArgs: [NSArray arrayWithObject: GAMES_PAGE]]];
-	[operationQueue addObject: 
-		[self makeInvocationForSelector: @selector(jump:)
-							   withArgs: [NSArray arrayWithObject: FRIENDS_PAGE]]];
+	e = [deleteMessageQueue objectEnumerator];
+	Message* deleteThis = nil;
+	while(deleteThis = [e nextObject]) {
+		[operationQueue addObject:
+			[self makeInvocationForSelector: @selector(jump:)
+								   withArgs: [NSArray arrayWithObject: 
+									   [NSString stringWithFormat: DISCARD_MESSAGE, 
+										   [deleteThis messageID]]]]];
+	}
+	[deleteMessageQueue removeAllObjects];
 	
 	
 	[self nextOperation];
@@ -368,6 +385,8 @@
 	} else if(NSNotFound != [url rangeOfString: MSG_CONTENT_PAGE options: NSLiteralSearch | NSAnchoredSearch].location) {
 		NSLog(@"gotMessageContent");
 		[self gotMessageContent];
+	} else if(NSNotFound != [url rangeOfString: MSG_DISCARDED options: NSLiteralSearch | NSAnchoredSearch].location) {
+		NSLog(@"gotDiscardedMessage");
 	} else {
 		NSLog(@"got intermediate");
 		// else it's an intermediate page, just do nothing and we'll be
@@ -592,18 +611,31 @@
 			@"  alert('filling out recipients');\n"
 			@"  var recipHash = %@;\n"
 			@"  var opts = document.getElementById('editRecipientsControl_friendListBox').options;\n"
+			@"  var count = 0;\n"
 			@"  for(var i = 0; i < opts.length; i++) {\n"
 			@"    if(opts[i].value in recipHash) {\n"
 			@"		alert('selecting ' + opts[i].value);\n"
 			@"      opts[i].selected = true;\n"
+			@"      count++;\n"
 			@"    }\n"
 			@"  }\n"
-			@"  var addButton = document.getElementById('editRecipientsControl_addFriendButton');\n"
-			@"  alert('undisabling ' + addButton);\n"
-			@"  addButton.disabled = false;\n"
-			@"  alert('clicking ' + addButton);\n"
-			@"  addButton.click();\n"
-//			@"	document.getElementById('editRecipientsControl_composeMessageButton').click();\n"
+			@"  if(count == 0) {\n"
+			@"    alert('could not find any friends to message');\n"
+			@"    var aFriend = null;\n"
+			@"    for(aFriend in recipHash);\n"
+			@"    alert('adding non-friend ' + aFriend);\n"
+			@"    document.getElementById('editRecipientsControl_gamertagTextbox').value = aFriend;\n"
+			@"    var addNonFriendButton = document.getElementById('editRecipientsControl_addNonFriendButton');\n"
+			@"    addNonFriendButton.disabled = false;\n"
+			@"    alert('clicking ' + addNonFriendButton);\n"
+			@"    addNonFriendButton.click();\n"
+			@"  } else {\n"
+			@"    var addButton = document.getElementById('editRecipientsControl_addFriendButton');\n"
+			@"    alert('undisabling ' + addButton);\n"
+			@"    addButton.disabled = false;\n"
+			@"    alert('clicking ' + addButton);\n"
+			@"    addButton.click();\n"
+			@"  }\n"
 			@"}\n", jsRecips];
 			
 		[view stringByEvaluatingJavaScriptFromString: script];
@@ -729,10 +761,23 @@
 - (void)acceptFriendRequest: (Message*)fromMsg
 {
 	[acceptFriendQueue addObject: fromMsg];
+	[self willChangeValueForKey: @"messages"];
+	[messages removeObject: fromMsg];
+	[self didChangeValueForKey: @"messages"];
 }
 - (void)rejectFriendRequest: (Message*)fromMsg
 {
 	[rejectFriendQueue addObject: fromMsg];
+	[self willChangeValueForKey: @"messages"];
+	[messages removeObject: fromMsg];
+	[self didChangeValueForKey: @"messages"];
+}
+- (void)deleteMessage: (Message*)m
+{
+	[deleteMessageQueue addObject: m];
+	[self willChangeValueForKey: @"messages"];
+	[messages removeObject: m];
+	[self didChangeValueForKey: @"messages"];
 }
 
 - (NSArray*)games 

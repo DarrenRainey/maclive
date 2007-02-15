@@ -54,6 +54,8 @@
 	NSMutableArray* friendRequestQueue;
 	NSMutableArray* messageQueue;
 	
+	NSMutableArray* deleteMessageQueue;
+	
 	NSMutableSet* acceptFriendQueue;
 	NSMutableSet* rejectFriendQueue;
 	
@@ -84,6 +86,8 @@
 - (NSArray*)friends;
 - (NSArray*)games;
 - (NSArray*)messages;
+
+- (void)deleteMessage: (Message*)m;
 
 
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector;

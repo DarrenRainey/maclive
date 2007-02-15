@@ -48,4 +48,6 @@
 - (void)acceptRequest;
 - (void)rejectRequest;
 
+- (void)discard;
+
 @end
