@@ -295,6 +295,14 @@
 	[self nextOperation];
 }
 
+- (void)cancel
+{
+	[view stopLoading: self];
+	[NSObject cancelPreviousPerformRequestsWithTarget: self
+											 selector: @selector(timeUp)
+											   object: nil];
+}
+
 - (void)timeUp
 {
 	[view stopLoading: self];
@@ -435,12 +443,15 @@
 	// an incorrect login is a good way to get the account locked.
 	NSString* documentHTML = 
 	[(DOMHTMLElement*)[[[view mainFrame] DOMDocument] documentElement] outerHTML];
-	if(NSNotFound != [documentHTML rangeOfString: WRONG_LOGIN].location) {
+	if(NSNotFound != [documentHTML rangeOfString: WRONG_LOGIN].location) 
+	{
 		NSLog(@"wrong login");
+		[self cancel];
 		[delegate loginIncorrect];
 		return;
 	} else if(NSNotFound != [documentHTML rangeOfString: LOCKED_ACCOUNT].location) {
 		NSLog(@"account locked");
+		[self cancel];
 		[delegate accountLocked];
 		return;
 	}

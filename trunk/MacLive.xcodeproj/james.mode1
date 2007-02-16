@@ -265,7 +265,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>15</integer>
+									<integer>5</integer>
 									<integer>1</integer>
 									<integer>0</integer>
 								</array>
@@ -308,7 +308,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>Message.m</string>
+								<string>LiveScraper.m</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -316,11 +316,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>Message.m</string>
+										<string>LiveScraper.m</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>1A309C010B851CC1009E8DEB</string>
+										<string>1A3C43710B866B2000B402A4</string>
 										<key>history</key>
 										<array>
 											<string>1A1F161E0B2B41B400C5C9EC</string>
@@ -344,9 +344,8 @@
 											<string>1A9BB6470B2BB9F6006997CF</string>
 											<string>1A309BB50B84EEA7009E8DEB</string>
 											<string>1A309BE70B851BCA009E8DEB</string>
-											<string>1A309BE90B851BCA009E8DEB</string>
-											<string>1A309BF80B851C17009E8DEB</string>
-											<string>1A309C000B851CC1009E8DEB</string>
+											<string>1A3C43660B866A8F00B402A4</string>
+											<string>1A3C43670B866A8F00B402A4</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -372,18 +371,9 @@
 											<string>1A9BB5CD0B2BAF4F006997CF</string>
 											<string>1A9BB64D0B2BB9F6006997CF</string>
 											<string>1A9BB64E0B2BB9F6006997CF</string>
-											<string>1A309BB70B84EEA7009E8DEB</string>
-											<string>1A309BB80B84EEA7009E8DEB</string>
-											<string>1A309BEB0B851BCA009E8DEB</string>
 											<string>1A309BEC0B851BCA009E8DEB</string>
 											<string>1A309BED0B851BCA009E8DEB</string>
-											<string>1A309BEE0B851BCA009E8DEB</string>
-											<string>1A309BEF0B851BCA009E8DEB</string>
-											<string>1A309BF00B851BCA009E8DEB</string>
-											<string>1A309BF10B851BCA009E8DEB</string>
-											<string>1A309BF20B851BCA009E8DEB</string>
-											<string>1A309BF30B851BCA009E8DEB</string>
-											<string>1A309BFA0B851C17009E8DEB</string>
+											<string>1A3C43680B866A8F00B402A4</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -441,9 +431,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>1A309B8F0B84E907009E8DEB</string>
+				<string>1A3C436A0B866A8F00B402A4</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>1A309B900B84E907009E8DEB</string>
+				<string>1A3C436B0B866A8F00B402A4</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -579,14 +569,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1A309BA80B84E94C009E8DEB</string>
-		<string>1A309BA90B84E94C009E8DEB</string>
-		<string>1A9BB4F80B2B6017006997CF</string>
-		<string>1CD10A99069EF8BA00B06720</string>
-		<string>1A309B860B84E8DE009E8DEB</string>
 		<string>/Users/james/Programming/Cocoa/maclive/MacLive.xcodeproj</string>
-		<string>1C0AD2B3069F1EA900FABCE6</string>
-		<string>1A1F15810B28ECCA00C5C9EC</string>
 	</array>
 	<key>WindowString</key>
 	<string>331 201 900 649 0 0 1440 878 </string>
@@ -679,7 +662,7 @@
 			<key>WindowToolGUID</key>
 			<string>1A1F15810B28ECCA00C5C9EC</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>FirstTimeWindowDisplayed</key>
@@ -1039,7 +1022,7 @@
 			<key>WindowToolGUID</key>
 			<string>1C0AD2B3069F1EA900FABCE6</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>Identifier</key>
