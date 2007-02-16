@@ -88,7 +88,7 @@
 - (NSArray*)messages;
 
 - (void)deleteMessage: (Message*)m;
-
+- (void)cancel;
 
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector;
 
