@@ -219,6 +219,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -259,19 +261,22 @@
 								<string>29B97317FDCFA39411CA2CEA</string>
 								<string>29B97323FDCFA39411CA2CEA</string>
 								<string>1058C7A0FEA54F0111CA2CBB</string>
+								<string>1058C7A2FEA54F0111CA2CBB</string>
 								<string>1C37FBAC04509CD000000102</string>
+								<string>1AA8CC800B8A5FC600B674A0</string>
+								<string>1AA8CC810B8A5FC600B674A0</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>5</integer>
-									<integer>1</integer>
-									<integer>0</integer>
+									<integer>39</integer>
+									<integer>36</integer>
+									<integer>35</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 0}, {226, 590}}</string>
+							<string>{{0, 260}, {226, 590}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -301,14 +306,12 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>AppController.m</string>
+								<string>QuickNSInvocation.h</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -316,11 +319,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>AppController.m</string>
+										<string>QuickNSInvocation.h</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>1AA8CC7D0B8A5EF500B674A0</string>
+										<string>1AA8CC8A0B8A5FF500B674A0</string>
 										<key>history</key>
 										<array>
 											<string>1A1F161E0B2B41B400C5C9EC</string>
@@ -345,8 +348,9 @@
 											<string>1AA8CC430B893BFD00B674A0</string>
 											<string>1AA8CC440B893BFD00B674A0</string>
 											<string>1AA8CC770B8A5EF500B674A0</string>
-											<string>1AA8CC780B8A5EF500B674A0</string>
-											<string>1AA8CC790B8A5EF500B674A0</string>
+											<string>1AA8CC820B8A5FC600B674A0</string>
+											<string>1AA8CC830B8A5FC600B674A0</string>
+											<string>1AA8CC840B8A5FC600B674A0</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -386,6 +390,8 @@
 											<string>1AA8CC7A0B8A5EF500B674A0</string>
 											<string>1AA8CC7B0B8A5EF500B674A0</string>
 											<string>1AA8CC7C0B8A5EF500B674A0</string>
+											<string>1AA8CC850B8A5FC600B674A0</string>
+											<string>1AA8CC860B8A5FC600B674A0</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -397,14 +403,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {652, 603}}</string>
+								<string>{{0, 0}, {652, 422}}</string>
 								<key>RubberWindowFrame</key>
 								<string>274 220 900 649 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>603pt</string>
+							<string>422pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -417,14 +423,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 608}, {652, 0}}</string>
+								<string>{{0, 427}, {652, 181}}</string>
 								<key>RubberWindowFrame</key>
 								<string>274 220 900 649 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>0pt</string>
+							<string>181pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>

@@ -16,11 +16,9 @@
 		1A9BB9B70B2C0800006997CF /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9BB9B40B2C0800006997CF /* CoreFoundation.framework */; };
 		1A9BB9B80B2C0800006997CF /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9BB9B50B2C0800006997CF /* CoreServices.framework */; };
 		1A9BB9B90B2C0800006997CF /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9BB9B60B2C0800006997CF /* Security.framework */; };
-		40718CD70B499927006256B4 /* Message.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 40718CD50B499927006256B4 /* Message.h */; };
 		40718CD80B499927006256B4 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 40718CD60B499927006256B4 /* Message.m */; };
 		408BFF3A0B288C40006F1EA6 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 408BFF390B288C40006F1EA6 /* WebKit.framework */; };
 		408BFF410B288D90006F1EA6 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 408BFF400B288D90006F1EA6 /* AppController.m */; };
-		40BB99280B360DB8007FB795 /* QuickNSInvocation.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 40BB99260B360DB8007FB795 /* QuickNSInvocation.h */; };
 		40BB99290B360DB8007FB795 /* QuickNSInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 40BB99270B360DB8007FB795 /* QuickNSInvocation.m */; };
 		40F44CB40B82635A0024B18C /* x.icns in Resources */ = {isa = PBXBuildFile; fileRef = 40F44CB30B82635A0024B18C /* x.icns */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
@@ -37,8 +35,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				1A9BB7BD0B2BEB73006997CF /* Growl-WithInstaller.framework in CopyFiles */,
-				40BB99280B360DB8007FB795 /* QuickNSInvocation.h in CopyFiles */,
-				40718CD70B499927006256B4 /* Message.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
