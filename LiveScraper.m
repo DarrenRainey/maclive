@@ -39,6 +39,8 @@
 #define COMPOSE_MESSAGE	@"Compose Your Message"
 #define MESSAGE_SENT	@"Your message has been sent"
 
+#define FRIEND_REQ_STATUS	@"%@ wants to be your friend"
+
 
 #define JS_LIB			\
 	@"function elementsByClassName(tagName, className) {\n" \
@@ -315,6 +317,15 @@
 			@"You might try checking your network connection or your Microsoft Passport username and password",
 			NSLocalizedRecoverySuggestionErrorKey,
 			nil]];
+	[self willChangeValueForKey: @"friends"];
+	[self willChangeValueForKey: @"games"];
+	[self willChangeValueForKey: @"messages"];
+	[friends removeAllObjects];
+	[games removeAllObjects];
+	[messages removeAllObjects];
+	[self didChangeValueForKey: @"friends"];
+	[self didChangeValueForKey: @"games"];
+	[self didChangeValueForKey: @"messages"];
 	[delegate loadFailed: error];
 }
 
@@ -511,6 +522,15 @@
 		  iconURL: (NSString*)url
 		   status: (NSString*)status
 {
+
+	// first check to make sure it isn't a friend request
+	// only want to show actual friends in the friend list
+	// friend requests go in messages, not friends.
+	NSString* compare = [NSString stringWithFormat: FRIEND_REQ_STATUS, gamertag];
+	if(NSNotFound != [status rangeOfString: compare].location) {
+		return;
+	}
+	
 	//NSLog(@"saw friend: %@ icon: %@ status: %@", gamertag, url, status);
 	Friend* f = [[Friend alloc] initWithGamertag: gamertag 
 										 iconURL: url 

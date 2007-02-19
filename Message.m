@@ -8,8 +8,9 @@
 
 #import "Message.h"
 #import "LiveScraper.h"
+#import "Friend.h"
 
-#define FRIEND_MSG @"Wants to be your friend."
+#define FRIEND_MSG @"%@ wants to be your friend."
 
 @implementation Message
 
@@ -81,7 +82,10 @@
 
 - (BOOL)isFriendRequest
 {
-	return [content isEqualToString: FRIEND_MSG];
+	NSString* gamertag = [from gamertag];
+	return NSNotFound != 
+		[content rangeOfString: 
+			[NSString stringWithFormat: FRIEND_MSG, gamertag]].location;
 }
 
 - (void)sendReply: (NSString*)reply {
