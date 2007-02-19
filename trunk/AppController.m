@@ -302,6 +302,7 @@ NSString* GetPasswordKeychain() {
 	[loginButton setEnabled: YES];
 	[spinner stopAnimation: self];
 	[spinner setHidden: YES];
+	[tabView selectTabViewItemWithIdentifier: @"setup"];
 }
 - (void)processNotifications
 {
