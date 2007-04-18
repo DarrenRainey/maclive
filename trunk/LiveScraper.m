@@ -26,8 +26,8 @@
 
 #define MSG_CONTENT_PAGE	@"http://live.xbox.com/en-US/profile/MessageCenter/ViewMessage.aspx?mx="
 
-#define ACCEPT_FRIEND	@"http://live.xbox.com/en-US/profile/FriendsMgmt.aspx?ru=http%3a%2f%2flive.xbox.com%2fen-US%2fprofile%2fMessageCenter%2fViewMessages.aspx&act=Accept&gt=%@"
-#define REJECT_FRIEND	@"http://live.xbox.com/en-US/profile/FriendsMgmt.aspx?ru=http%3a%2f%2flive.xbox.com%2fen-US%2fprofile%2fMessageCenter%2fViewMessages.aspx&act=Reject&gt=%@"
+#define ACCEPT_FRIEND	@"http://live.xbox.com/en-US/profile/FriendsMgmt.aspx?ru=http%%3a%%2f%%2flive.xbox.com%%2fen-US%%2fprofile%%2fMessageCenter%%2fViewMessages.aspx&act=Accept&gt=%@"
+#define REJECT_FRIEND	@"http://live.xbox.com/en-US/profile/FriendsMgmt.aspx?ru=http%%3a%%2f%%2flive.xbox.com%%2fen-US%%2fprofile%%2fMessageCenter%%2fViewMessages.aspx&act=Reject&gt=%@"
 
 #define DISCARD_MESSAGE @"http://live.xbox.com/en-US/profile/MessageCenter/RemoveMessage.aspx?mx=%d&bk=0"
 #define MSG_DISCARDED	@"http://live.xbox.com/en-US/profile/MessageCenter/RemoveMessage.aspx"
@@ -252,11 +252,14 @@
 	e = [acceptFriendQueue objectEnumerator];
 	Message* acceptThis = nil;
 	while(acceptThis = [e nextObject]) {
+		NSString* acceptURL = 
+			[NSString stringWithFormat: ACCEPT_FRIEND, 
+				[[[acceptThis from] gamertag] stringByAddingPercentEscapesUsingEncoding: 
+					NSUTF8StringEncoding]
+			];
 		[operationQueue addObject:
 			[self makeInvocationForSelector: @selector(jump:)
-								   withArgs: [NSArray arrayWithObject: 
-									   [NSString stringWithFormat: ACCEPT_FRIEND, 
-										   [[acceptThis from] gamertag]]]]];
+								   withArgs: [NSArray arrayWithObject: acceptURL]]];
 	}
 	[acceptFriendQueue removeAllObjects];
 	
@@ -274,11 +277,17 @@
 	e = [rejectFriendQueue objectEnumerator];
 	Message* rejectThis = nil;
 	while(rejectThis = [e nextObject]) {
+		NSString* rejectURL = 
+			[NSString stringWithFormat: REJECT_FRIEND, 
+				[[[rejectThis from] gamertag] stringByAddingPercentEscapesUsingEncoding: 
+					NSUTF8StringEncoding]
+			];
 		[operationQueue addObject:
 			[self makeInvocationForSelector: @selector(jump:)
-								   withArgs: [NSArray arrayWithObject: 
-									   [NSString stringWithFormat: REJECT_FRIEND, 
-										   [[rejectThis from] gamertag]]]]];
+								   withArgs: 
+				[NSArray arrayWithObject: rejectURL]
+			]
+		];
 	}
 	[rejectFriendQueue removeAllObjects];
 	
@@ -583,24 +592,29 @@
 
 - (void)gotFriendRequestResult
 {
-	NSString* friend = [[friendRequestQueue lastObject] retain];
-	[friendRequestQueue removeLastObject];
-	
-	NSString* documentHTML = 
-	[(DOMHTMLElement*)[[[view mainFrame] DOMDocument] documentElement] outerHTML];
-	if(NSNotFound != [documentHTML rangeOfString: NO_GAMERTAG].location) {
-		[delegate addFriendFailedForGamertag: friend
-								   withError: [NSError errorWithDomain: @"Xbox Live Scraper"
-																  code: 1 
-															  userInfo:
-									   [NSDictionary dictionaryWithObjectsAndKeys:
-										   @"no such gamertag exists", NSLocalizedFailureReasonErrorKey,
-										   @"check your typing and try again", NSLocalizedRecoverySuggestionErrorKey,
-										   nil]]];
-	} else {
-		[delegate addFriendSucceededForGamertag: friend];
+	// if the friendRequestQueue is empty that means we got here
+	// by either confirming or rejecting a friend, so the result should
+	// be to do nothing
+	if([friendRequestQueue count] > 0) {
+		NSString* friend = [[friendRequestQueue lastObject] retain];
+		[friendRequestQueue removeLastObject];
+		
+		NSString* documentHTML = 
+		[(DOMHTMLElement*)[[[view mainFrame] DOMDocument] documentElement] outerHTML];
+		if(NSNotFound != [documentHTML rangeOfString: NO_GAMERTAG].location) {
+			[delegate addFriendFailedForGamertag: friend
+									   withError: [NSError errorWithDomain: @"Xbox Live Scraper"
+																	  code: 1 
+																  userInfo:
+										   [NSDictionary dictionaryWithObjectsAndKeys:
+											   @"no such gamertag exists", NSLocalizedFailureReasonErrorKey,
+											   @"check your typing and try again", NSLocalizedRecoverySuggestionErrorKey,
+											   nil]]];
+		} else {
+			[delegate addFriendSucceededForGamertag: friend];
+		}
+		[friend release];
 	}
-	[friend release];
 }
 
 - (void)sendMessage: (SendMessage*)sm
