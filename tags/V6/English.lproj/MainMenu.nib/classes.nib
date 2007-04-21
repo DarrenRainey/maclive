@@ -1,0 +1,41 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {
+                addFriendCancel = id; 
+                addFriendOK = id; 
+                doIt = id; 
+                markMessageRead = id; 
+                sendMessageCancel = id; 
+                sendMessageOK = id; 
+                showAddFriendSheet = id; 
+                showMessageFriendsSheet = id; 
+                toggleScraperWindow = id; 
+            }; 
+            CLASS = AppController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                addFriendSheet = NSWindow; 
+                debugToggle = NSMenuItem; 
+                email = NSTextField; 
+                friendsArrayController = NSArrayController; 
+                friendsTable = NSTableView; 
+                loginButton = NSButton; 
+                messageText = NSTextView; 
+                messageViewer = NSTextView; 
+                messagesArrayController = NSArrayController; 
+                messagesTable = NSTableView; 
+                newFriend = NSTextField; 
+                password = NSSecureTextField; 
+                sendMessageSheet = NSWindow; 
+                spinner = NSProgressIndicator; 
+                tabView = NSTabView; 
+                webView = WebView; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = NSSegmentedControl; LANGUAGE = ObjC; SUPERCLASS = NSControl; }
+    ); 
+    IBVersion = 1; 
+}
