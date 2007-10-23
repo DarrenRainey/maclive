@@ -582,10 +582,7 @@
 - (void)sendFriendRequest: (NSString*)gamertag
 {
 	NSString* url = [NSString stringWithFormat: 
-		@"http://live.xbox.com/en-US/profile/FriendsMgmt.aspx"
-		@"?Add=act&ru=%@&gt=%@",
-		[@"http://live.xbox.com/en-US/profile/Friends.aspx" 
-			stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding],
+		@"http://live.xbox.com/en-US/profile/FriendsMgmt.aspx?act=Add&ru=http%%3A%%2F%%2Flive.xbox.com%%2Fen-US%%2Fprofile%%2FFriends.aspx&gt=%@",
 		[gamertag stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding]];
 	[self jump: url];
 }
@@ -611,6 +608,19 @@
 											   @"check your typing and try again", NSLocalizedRecoverySuggestionErrorKey,
 											   nil]]];
 		} else {
+			// There is a message on screen like
+			
+			// You have added <gamertag> to your friends list. 
+			// This may not be immediately reflected on the site.
+			
+			// but this isn't really true, you have to click
+			// the ok button ...
+			
+			NSString* script = 
+				@"document.getElementById('ctl00_MainContent_OkButton').click();";
+			
+			[view stringByEvaluatingJavaScriptFromString: script];
+			
 			[delegate addFriendSucceededForGamertag: friend];
 		}
 		[friend release];

@@ -19,6 +19,4 @@
 - (BOOL)notify;
 - (void)setNotify: (BOOL)note;
 
-
-
 @end

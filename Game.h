@@ -7,9 +7,9 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "XBNotable.h"
+#import "IconNotable.h"
 
-@interface Game : XBNotable {
+@interface Game : IconNotable {
 
 	NSString* name;
 	NSURL* icon;
