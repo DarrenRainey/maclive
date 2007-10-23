@@ -20,6 +20,9 @@
 		408BFF3A0B288C40006F1EA6 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 408BFF390B288C40006F1EA6 /* WebKit.framework */; };
 		408BFF410B288D90006F1EA6 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 408BFF400B288D90006F1EA6 /* AppController.m */; };
 		40BB99290B360DB8007FB795 /* QuickNSInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 40BB99270B360DB8007FB795 /* QuickNSInvocation.m */; };
+		40EAF5B00CCC754300A83A87 /* noIcon.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 40EAF5AF0CCC754300A83A87 /* noIcon.tiff */; };
+		40EAF5B70CCC75AF00A83A87 /* IconNotable.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 40EAF5B50CCC75AF00A83A87 /* IconNotable.h */; };
+		40EAF5B80CCC75AF00A83A87 /* IconNotable.m in Sources */ = {isa = PBXBuildFile; fileRef = 40EAF5B60CCC75AF00A83A87 /* IconNotable.m */; };
 		40F44CB40B82635A0024B18C /* x.icns in Resources */ = {isa = PBXBuildFile; fileRef = 40F44CB30B82635A0024B18C /* x.icns */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
@@ -35,6 +38,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				1A9BB7BD0B2BEB73006997CF /* Growl-WithInstaller.framework in CopyFiles */,
+				40EAF5B70CCC75AF00A83A87 /* IconNotable.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -68,9 +72,12 @@
 		408BFF400B288D90006F1EA6 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
 		40BB99260B360DB8007FB795 /* QuickNSInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickNSInvocation.h; sourceTree = "<group>"; };
 		40BB99270B360DB8007FB795 /* QuickNSInvocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickNSInvocation.m; sourceTree = "<group>"; };
+		40EAF5AF0CCC754300A83A87 /* noIcon.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = noIcon.tiff; sourceTree = "<group>"; };
+		40EAF5B50CCC75AF00A83A87 /* IconNotable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconNotable.h; sourceTree = "<group>"; };
+		40EAF5B60CCC75AF00A83A87 /* IconNotable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IconNotable.m; sourceTree = "<group>"; };
 		40F44CB30B82635A0024B18C /* x.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = x.icns; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		8D1107320486CEB800E47090 /* MacLive.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MacLive.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D1107320486CEB800E47090 /* MacLive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacLive.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +114,8 @@
 				40BB99270B360DB8007FB795 /* QuickNSInvocation.m */,
 				40718CD50B499927006256B4 /* Message.h */,
 				40718CD60B499927006256B4 /* Message.m */,
+				40EAF5B50CCC75AF00A83A87 /* IconNotable.h */,
+				40EAF5B60CCC75AF00A83A87 /* IconNotable.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -166,6 +175,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				40EAF5AF0CCC754300A83A87 /* noIcon.tiff */,
 				40F44CB30B82635A0024B18C /* x.icns */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
@@ -228,6 +238,7 @@
 				8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */,
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				40F44CB40B82635A0024B18C /* x.icns in Resources */,
+				40EAF5B00CCC754300A83A87 /* noIcon.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -246,6 +257,7 @@
 				1A9BB76A0B2BE510006997CF /* XBNotable.m in Sources */,
 				40BB99290B360DB8007FB795 /* QuickNSInvocation.m in Sources */,
 				40718CD80B499927006256B4 /* Message.m in Sources */,
+				40EAF5B80CCC75AF00A83A87 /* IconNotable.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,7 +287,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
@@ -301,7 +313,7 @@
 					ppc,
 					i386,
 				);
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",

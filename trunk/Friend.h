@@ -7,14 +7,15 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "XBNotable.h"
+#import "IconNotable.h"
 
 
-@interface Friend : XBNotable {
+@interface Friend : IconNotable {
 
 	NSString* gamertag;
 	NSURL* icon;
 	NSString* status;	
+	
 }
 
 - (id)initWithGamertag: (NSString*)tag
